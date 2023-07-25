@@ -245,7 +245,7 @@ aria-labelledby="favoritesModalLabel">
                       <tr>
                         <td style="text-align: center;">{{($key+1)}}</td>
                         <td style="text-align: center;">{{(date('d-m-Y', strtotime($value->tanggal)))}}</td>
-                        <td style="text-align: center;">{{($value->g)}}</td>
+                        <td style="text-align: center;">{{($value->no_regis_pasien_dewasa)}}</td>
                         <td style="text-align: center;">{{$value->kehamilan_ke}}</td>
                         <td>
                           <div class="form-group">

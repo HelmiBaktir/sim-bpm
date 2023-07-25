@@ -168,7 +168,7 @@ transform: translateY(5px);
                   <label class="control-label col-sm-4" for="nama">
                     <select class="form-control" id="txtAgama" name="txtAgama" onchange='txtAgama.style.backgroundColor = "#FFF"'>
                       <option selected disabled value="">Agama...</option>
-                      <option value="atheis">Atheis</option>
+                      <option value="konghucu">KongHucu</option>
                       <option value="budha">Budha</option>
                       <option value="hindu">Hindu</option>
                       <option value="islam">Islam</option>
@@ -311,7 +311,7 @@ transform: translateY(5px);
                   <label class="control-label col-sm-4" for="nama">
                     <select class="form-control" id="txtAgama2" name="txtAgama2" onchange='txtAgama2.style.backgroundColor = "#FFF"'>
                       <option selected disabled value="">Agama...</option>
-                      <option value="atheis">Atheis</option>
+                      <option value="konghucu">KongHucu</option>
                       <option value="budha">Budha</option>
                       <option value="hindu">Hindu</option>
                       <option value="islam">Islam</option>

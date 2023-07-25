@@ -29,9 +29,6 @@
 </head>
 <body class="hold-transition ">
 <div class="login-box">
-    <div class="login-logo">
-        <a href="../../index2.html"> &nbsp; </a>
-    </div>
   <!-- /.login-logo -->
   <div class="card" style=" border-radius:30px" >
     <div class="card-body ">

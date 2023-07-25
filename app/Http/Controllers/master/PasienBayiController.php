@@ -167,16 +167,16 @@ class PasienBayiController extends Controller
                     $pasienBayi->save();
                 }
 
-                return redirect()->back()->with(['message' => count($arrId).' Pasien Dewasa berhasil dihapus.']);
+                return redirect()->back()->with(['notif_berhasil' => count($arrId).' Pasien Dewasa berhasil dihapus.']);
             } else {
                 $pasienBayi = PasienBayi::find($pasienBayi);
                 $pasienBayi->status_hapus = 1;
                 $pasienBayi->updated_at = date("Y-m-d H:i:s");
                 $pasienBayi->save();
-                return redirect()->back()->with(['message' => 'Pasien Dewasa Berhasil Dihapus.']);
+                return redirect()->back()->with(['notif_berhasil' => 'Pasien Dewasa Berhasil Dihapus.']);
             }
         } catch (\Throwable $e) {
-            return redirect()->back()->with(['danger_message' => 'Pasien Dewasa Gagal Dihapus.']);
+            return redirect()->back()->with(['notif_gagal' => 'Pasien Dewasa Gagal Dihapus.']);
         }
 
     }

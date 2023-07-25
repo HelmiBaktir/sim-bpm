@@ -64,7 +64,7 @@ transform: translateY(5px);
   @endif
   <div class="row mb-2">
     <div class="col-sm-6">
-      <h3>Histori KSPR</h3>
+      <h3>Histori Penapisan</h3>
     </div>
     <div class="col-sm-6">
       <ol class="breadcrumb float-sm-right">

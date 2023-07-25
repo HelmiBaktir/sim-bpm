@@ -117,7 +117,7 @@ transform: translateY(5px);
                         <label class="control-label col-lg-8">
                           <select class="form-control" id="txtAgamaibu" name="txtAgamaibu" autocomplete="off" required>
                             <option selected disabled value="">Agama...</option>
-                            <option value="atheis">Atheis</option>
+                            <option value="konghucu">KongHucu</option>
                             <option value="budha">Budha</option>
                             <option value="hindu">Hindu</option>
                             <option value="islam">Islam</option>
@@ -178,7 +178,7 @@ transform: translateY(5px);
                         <label class="control-label col-lg-8">
                           <select class="form-control" id="txtAgamaayah" name="txtAgamaayah" autocomplete="off" required>
                             <option selected disabled value="">Agama...</option>
-                            <option value="atheis">Atheis</option>
+                            <option value="konghucu">KongHucu</option>
                             <option value="budha">Budha</option>
                             <option value="hindu">Hindu</option>
                             <option value="islam">Islam</option>

@@ -188,5 +188,9 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('/laporan_imunisasi/print', [LaporanController::class,'printLaporanImunisasi']);
 	Route::post('/laporan_kunjungan_kb/print', [LaporanController::class,'printLaporanKunjunganKB']);
 
+	Route::get('/profile', function () {
+		return view('master.karyawan.profile');
+	});
+
 
 });

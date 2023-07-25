@@ -223,14 +223,6 @@
         @yield('content')
       </div>
     </div>
-    <!-- /.content-wrapper -->
-    <footer class="main-footer">
-      <strong>Copyright &copy; 2018 SIM BPS by TeamLabs
-        <div class="float-right d-none d-sm-inline-block">
-          <b>Version</b> 1.0
-        </div>
-    </footer>
-
   </div>
   <!-- ./wrapper -->
 

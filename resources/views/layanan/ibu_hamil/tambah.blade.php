@@ -142,7 +142,7 @@ background-color: #4CAF50;
                 <div class="form-group">
                   <select class="form-control" id="txtAgamaibu" name="txtAgamaibu" oninput="this.className = 'form-control'">
                     <option selected disabled value="">Agama...</option>
-                    <option value="atheis">Atheis</option>
+                    <option value="konghucu">KongHucu</option>
                     <option value="budha">Budha</option>
                     <option value="hindu">Hindu</option>
                     <option value="islam">Islam</option>
@@ -192,7 +192,7 @@ background-color: #4CAF50;
                 <div class="form-group">
                   <select class="form-control" id="txtAgamaayah" name="txtAgamaayah" oninput="this.className = 'form-control'">
                     <option selected disabled value="">Agama...</option>
-                    <option value="atheis">Atheis</option>
+                    <option value="konghucu">KongHucu</option>
                     <option value="budha">Budha</option>
                     <option value="hindu">Hindu</option>
                     <option value="islam">Islam</option>
@@ -1053,7 +1053,7 @@ background-color: #4CAF50;
                       <label class="col-sm-3" style="font-weight: normal;">Sticker P4K</label>
                       <label class="col-sm-6">
                         <select class="form-control" id="txtSticker" name="txtSticker" oninput="this.className = 'form-control'">
-                          <option selected disabled value="">Refleks...</option>
+                          <option selected disabled value="">Stiker...</option>
                           <option value="ada">Ada</option>
                           <option value="tidak">Tidak</option>
                         </select>

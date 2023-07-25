@@ -9,7 +9,7 @@
     <title>SIM BPS</title>
      <style>
        #content{
-            font-size: 14px;
+            font-size: 16px;
             /* float: left; */
             float: none;
 
@@ -90,7 +90,7 @@
             <br>
             <div style="text-align: left">
                 <div style="text-align: left">
-                    &nbsp;&nbsp;&nbsp;&nbsp;Dengan hormat,
+                    Dengan hormat,
                 </div>
                 <BR>
                 <div style="text-align: left">
@@ -107,7 +107,6 @@
                     &nbsp;&nbsp;&nbsp;&nbsp;Alamat &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: {{$data['alamat']}}
 
             </div>
-            <br>
             <div style="text-align: left">
                 <div style="text-align: left">
                     <p style="font-weight: bold;">Anamnese &nbsp;&nbsp;&nbsp;:</p>
@@ -115,14 +114,12 @@
                 <div style="text-align: left">
                     anamnesenya adalah {{$data['anamnese']}}
                 </div>
-                <br>
                 <div style="text-align: left">
                     <p style="font-weight: bold;">Tindakan/Pemeriksaan &nbsp;&nbsp;&nbsp;:</p>
                 </div>
                 <div style="text-align: left">
                     Tindakan yang dilakukan adalah {{$data['tindakan']}}
                 </div>
-                <br>
                 <div style="text-align: left">
                     <p style="font-weight: bold;">Perkiraan Diagnosa &nbsp;&nbsp;&nbsp;:</p>
                 </div>
@@ -148,7 +145,6 @@
             <div style="margin-right: 15%">
                 Bidan
             </div>
-            <br>
             <br>
             <br>
             <br>

@@ -154,7 +154,7 @@ background-color: #4CAF50;
                 <div class="form-group">
                   <select class="form-control" id="txtAgamaibu" name="txtAgamaibu" oninput="this.className = 'form-control'">
                     <option selected disabled value="">Agama...</option>
-                    <option value="atheis">Atheis</option>
+                    <option value="konghucu">KongHucu</option>
                     <option value="budha">Budha</option>
                     <option value="hindu">Hindu</option>
                     <option value="islam">Islam</option>
@@ -211,7 +211,7 @@ background-color: #4CAF50;
                 <div class="form-group">
                   <select class="form-control" id="txtAgamaayah" name="txtAgamaayah" oninput="this.className = 'form-control'">
                     <option selected disabled value="">Agama...</option>
-                    <option value="atheis">Atheis</option>
+                    <option value="konghucu">KongHucu</option>
                     <option value="budha">Budha</option>
                     <option value="hindu">Hindu</option>
                     <option value="islam">Islam</option>
