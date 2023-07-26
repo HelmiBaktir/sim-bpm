@@ -146,6 +146,7 @@ Route::middleware(['auth'])->group(function () {
 	Route::post('/layanan-ibu-hamil-observasi', [IbuHamilController::class,'storeObservasi']);
 	Route::get('/layanan-ibu-hamil-observasi-kala/{idkartuobservasi}', [IbuHamilController::class,'indexObservasiKala']);
 	Route::post('/layanan-ibu-hamil-observasi-kala', [IbuHamilController::class,'storeObservasiKala']);
+	Route::post('/layanan-ibu-hamil-observasi-import', [IbuHamilController::class,'storeImportObservasi']);
 
 	// Route::post('/ibu_hamil/importObservasi', 'layanan\ibuHamilController@storeImportObservasi');
 	// Route::get('/ibuHamilObservasi/{id}', 'layanan\ibuHamilController@indexObservasi');

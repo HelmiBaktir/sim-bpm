@@ -255,7 +255,7 @@ class IbuHamilController extends Controller
             $new_ibu_hamil->nafsu_makan = $txtNafsuMakan;
             $new_ibu_hamil->ket_nafsu_makan = $txtKeteranganNafsuMakan;
             $new_ibu_hamil->pendarahan = $txtPendarahan;
-            $new_ibu_hamil->pendarahan_sejak = $txtPendarahansejak;
+            $new_ibu_hamil->pendarahan_sejak = $txtPendarahan !== 'tidak' ? $txtPendarahansejak : null;
             $new_ibu_hamil->keluhan_utama = $txt_keluhan_utama;
             $new_ibu_hamil->hasil_skor_kspr = $txtHasilKSPR;
             $new_ibu_hamil->dotk = $txtDOTK;
@@ -537,8 +537,40 @@ class IbuHamilController extends Controller
         $hlayanan = HistoryLayananIbuHamil::where('id_layanan_ibu_hamil', $id)->get();
         $c_persalinan = DB::table('catatan_persalinan')->where('id_layanan_ibu_hamil', $id)->count();
         // dd($id);
-        $informed_consent = DB::select('SELECT l.url_gambar FROM lampiran l WHERE id_layanan = ' . $id . ' AND no_registrasi_pasien = "' . $layanan[0]->no_registrasi . '"');
+        $informed_consent = DB::select('SELECT l.url_gambar FROM lampiran l WHERE id_layanan = ' . $id . ' AND no_registrasi_pasien = "' . $layanan[0]->no_regis_pasien_dewasa . '"');
+        // dd($informed_consent);
         return view('layanan.ibu_hamil.detail_layanan', compact(['hlayanan', 'layanan', 'c_persalinan', 'informed_consent']));
+    }
+
+    public function storeImportObservasi(Request $request)
+    {
+        try {
+            // INSERT DB LAMPIRAN
+            if ($request->lampiranobservasi) {
+                foreach ($request->lampiranobservasi as $key => $value) {
+                    $image = $value;
+                    $extensions = $value->getClientOriginalExtension();
+                    $filenameToSave = "lampiran_Observasi_IH_".$request->noregisibu."_".date("Ymd")."_".($request->idxjumlah+($key+1)).".".$extensions;
+                    $destinationPath = public_path('/lampiran');
+                    $imagePath = "lampiran/". $filenameToSave;
+                    $image->move($destinationPath, $filenameToSave);
+
+                    $new_lampiran = new Lampiran();
+                    $new_lampiran->jenis_layanan = '5';
+                    $new_lampiran->id_layanan = $request->idkartuibu;
+                    $new_lampiran->tanggal = date("Y-m-d");
+                    $new_lampiran->url_gambar = $imagePath;
+                    $new_lampiran->no_registrasi_pasien = $request->noregisibu;
+                    $new_lampiran->save();
+                }
+            }
+        } catch (\Exception $e) {
+            DB::rollback();
+            dd($e->getMessage());
+            return redirect('/layananIbuHamilDetail/detailKartu/' . $request->idkartuibu)->with(['danger_message'=>'Data observasi gagal disimpan.']);
+        }
+
+        return redirect('/layananIbuHamilDetail/detailKartu/' .  $request->idkartuibu)->with(['message'=>'Data observasi berhasil disimpan.']);
     }
 
     public function get_riwayat_hamil(Request $request)
@@ -591,6 +623,7 @@ class IbuHamilController extends Controller
 
     public function tambahHistoryHamil(request $request)
     {
+        
         //echo "string";
         $string = "";
         $string .= "nomor_registrasi <BR>";
@@ -715,6 +748,7 @@ class IbuHamilController extends Controller
         $string .= $request->list_qty;
         $string .= $request->harga_obat;
         DB::beginTransaction();
+        // dd($request->lampiran);
 
         try {
             $up_pasien_dewasa = PasienDewasa::find($request->no_reg);
@@ -727,7 +761,7 @@ class IbuHamilController extends Controller
             $up_pasien_dewasa->pekerjaan = $request->txtPekerjaanibu;
             $up_pasien_dewasa->pendidikan = $request->txtPendidikanibu;
             $up_pasien_dewasa->buku_kia = $request->cboBukuKIA;
-            $up_pasien_dewasa->tgl_buku_kia = $request->tglKIA;
+            $up_pasien_dewasa->tgl_buku_kia = date("Y-m-d", strtotime($request->tglKIA)); 
             $up_pasien_dewasa->save();
 
             $riwayat_kawinnya = isset($request->riwayat_kawin) ? count($request->riwayat_kawin) : 0;
@@ -736,7 +770,7 @@ class IbuHamilController extends Controller
                     $splitan = explode(";", $value);
                     $new_suami_pasien_dewasa = new SuamiPasienDewasa();
                     $new_suami_pasien_dewasa->nama = $request->txtNamaayah;
-                    $new_suami_pasien_dewasa->tanggal_lahir = date("Y-m-d", strtotime($request->txtTanggalLahirayah));
+                    $new_suami_pasien_dewasa->tanggal_lahir = $request->txtTanggalLahirayah == '00-00-0000' ? null : date("Y-m-d", strtotime($request->txtTanggalLahirayah)) ;
                     $new_suami_pasien_dewasa->agama = $request->txtAgamaayah;
                     $new_suami_pasien_dewasa->alamat = $request->txtAlamatayah;
                     $new_suami_pasien_dewasa->telp = $request->txtPhoneayah;
@@ -759,7 +793,7 @@ class IbuHamilController extends Controller
                         ->update(
                             [
                                 'nama' => $request->txtNamaayah,
-                                'tanggal_lahir' => date("Y-m-d", strtotime($request->txtTanggalLahirayah)),
+                                'tanggal_lahir' => $request->txtTanggalLahirayah == '00-00-0000' ? null : date("Y-m-d", strtotime($request->txtTanggalLahirayah)),
                                 'agama' => $request->txtAgamaayah,
                                 'alamat' => $request->txtAlamatayah,
                                 'telp' => $request->txtPhoneayah,
@@ -771,7 +805,9 @@ class IbuHamilController extends Controller
                 } else {
                     $new_suami_pasien_dewasa = new SuamiPasienDewasa();
                     $new_suami_pasien_dewasa->nama = $request->txtNamaayah;
-                    $new_suami_pasien_dewasa->tanggal_lahir = date("Y-m-d", strtotime($request->txtTanggalLahirayah));
+          
+                    $new_suami_pasien_dewasa->tanggal_lahir = $request->txtTanggalLahirayah == '00-00-0000' ? null : date("Y-m-d", strtotime($request->txtTanggalLahirayah)) ;
+                    
                     $new_suami_pasien_dewasa->agama = $request->txtAgamaayah;
                     $new_suami_pasien_dewasa->alamat = $request->txtAlamatayah;
                     $new_suami_pasien_dewasa->telp = $request->txtPhoneayah;
@@ -817,7 +853,7 @@ class IbuHamilController extends Controller
             $new_ibu_hamil->nafsu_makan = $request->txtNafsuMakan;
             $new_ibu_hamil->ket_nafsu_makan = $request->txtKeteranganNafsuMakan;
             $new_ibu_hamil->pendarahan = $request->txtPendarahan;
-            $new_ibu_hamil->pendarahan_sejak = date('Y-m-d', strtotime($request->txtPendarahansejak));
+            $new_ibu_hamil->pendarahan_sejak = $request->txtPendarahan !== 'tidak' ? date('Y-m-d', strtotime($request->txtPendarahansejak)) : null; 
             $new_ibu_hamil->keluhan_utama = $request->txt_keluhan_utama;
             $new_ibu_hamil->hasil_skor_kspr = $request->txtHasilKSPR;
             $new_ibu_hamil->dotk = $request->txtDOTK;
@@ -986,9 +1022,9 @@ class IbuHamilController extends Controller
 
                 $new_history_kspr = new HistoryKspr();
                 $new_history_kspr->skor = $skorkspr;
-                $new_history_kspr->master_kspr_id  = $id_new_header_kspr;
+                $new_history_kspr->id_header_kspr  = $id_new_header_kspr;
                 $new_history_kspr->id_layanan_ibu_hamil =$id_new_ibu_hamil;
-                $new_history_kspr->id_master_kspr = $value['id'];
+                $new_history_kspr->master_kspr_id = $value['id'];
                 $new_history_kspr->status_hapus = 0;
                 $new_history_kspr->save();
             }
@@ -1037,8 +1073,8 @@ class IbuHamilController extends Controller
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
-            print_r($e->getMessage());
-            die();
+            dd($e->getMessage());
+            // die();
             return redirect('/layanan-ibu-hamil/' . $request->no_reg)->with(['danger_message' => 'Data kehamilan gagal disimpan.']);
         }
 

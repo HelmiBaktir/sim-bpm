@@ -107,13 +107,13 @@
         <span aria-hidden="true">&times;</span></button> 
       </div> 
       <div class="modal-body"> 
-        <FORM method="post" action="<?php echo URL::to('/ibu_hamil/importObservasi')?>" enctype="multipart/form-data"> 
+        <FORM method="post" action="{{ url('/layanan-ibu-hamil-observasi-import') }}" enctype="multipart/form-data"> 
           <div class="form-group">
             <input type="file" id="input-file-now" name="lampiranobservasi[]" multiple class="dropify" data-show-remove="true" data-allowed-file-extensions="jpg jpeg png" data-height="300"/>
           </div> 
           <div class="form-group" id="field_input"> 
             <input type="hidden" name="_token" value="{!!csrf_token()!!}"> 
-            <input type="hidden" name="noregisibu" value="{{$layanan[0]->no_registrasi}}"></input>
+            <input type="hidden" name="noregisibu" value="{{$layanan[0]->no_regis_pasien_dewasa}}"></input>
             <input type="hidden" name="idkartuibu" value="{{$layanan[0]->id}}"></input>
             <input type="hidden" name="idxjumlah" value="{{count($informed_consent)}}"></input>
             <button type="button" class="btn btn-default" data-dismiss="modal" aria-label="Close">Tutup</button> 
@@ -253,7 +253,7 @@
                       </div> 
                       <div class="form-group">
                         <label class="col-sm-3" style="font-weight: normal;">pendarahan sejak</label> 
-                        <label class="col-sm-3" style="font-weight: normal;">: {{date('d-m-Y', strtotime($layanan[0]->pendarahan_sejak))}}</label>
+                        <label class="col-sm-3" style="font-weight: normal;">: {{ $layanan[0]->pendarahan_sejak !== null ? date('d-m-Y', strtotime($layanan[0]->pendarahan_sejak)) : '' }}</label>
                       </div> 
                       <div class="form-group">
                         <label class="col-sm-3" style="font-weight: normal;">keluhan utama</label> 

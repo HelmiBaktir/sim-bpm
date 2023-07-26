@@ -1687,9 +1687,9 @@ background-color: #4CAF50;
           
           var url = "{{ route('ibu.hamil.cek.stok.obat') }}";
           $.ajax({
-            type:"GET",
+            type:"POST",
             url:url,
-            data:{obat_id:id, id_layanan:id_layanan},
+            data:{obat_id:id, id_layanan:id_layanan,_token:"{{ csrf_token() }}"},
             success:function(data){
                 var resp = $.parseJSON(data);
                 console.log(resp);
