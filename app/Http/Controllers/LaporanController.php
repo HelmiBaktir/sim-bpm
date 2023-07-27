@@ -240,6 +240,8 @@ class LaporanController extends Controller
         ])->render());
         $dompdf->render();
         $title = $judul;
+        // dd($pasien_bayi);
+        // dd($header_layanan_imunisasi);
         return $dompdf->stream($title, ['Attachment' => true]);
     }
 
