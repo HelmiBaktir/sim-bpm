@@ -11,7 +11,7 @@ table th {font-size: 15px;}
   <div class="box box-info">
     <br>
     <br>
-    <h5 style="text-align: center; margin-top: -45;">{{  $judul }}</h5>
+    <h3 style="text-align: center; margin-top: -45;"><?php echo $judul; ?></h3>
     <hr>
 
     <div class="box-body">
@@ -56,43 +56,6 @@ table th {font-size: 15px;}
             <?php } ?>
           </tr>
         </thead>
-        <thead>
-          <tr role="row">
-            <th rowspan="2" style="width: 5%; text-align: center;">
-              1
-            </th>
-            <th rowspan="2" style="width: 40%; text-align: center;">
-              2
-            </th>
-            <th rowspan="2" style="width: 25%; text-align: center;">
-              3
-            </th>
-            <th rowspan="2" style="width: 25%; text-align: center;">
-              4
-            </th>
-            <th rowspan="2" style="width: 25%; text-align: center;">
-              5
-            </th>
-            <th rowspan="2" style="width: 25%; text-align: center;">
-              6
-            </th>
-            <th rowspan="2" style="width: 25%; text-align: center;">
-              7
-            </th>
-            <th rowspan="2" style="width: 25%; text-align: center;">
-              8
-            </th>
-            <?php $jumlah_header= 0; foreach($header_layanan_imunisasi as $key => $value) { 
-              $jumlah_header+= 1;} ?>
-          </tr>
-          <tr role="row">
-            <?php $bantu = 9; foreach($header_layanan_imunisasi as $key => $value) { ?>
-            <th style="width: 25%; text-align: center;">
-              {{$bantu+$key}}
-            </th>
-            <?php } ?>
-          </tr>
-        </thead>
         <tbody>
           <?php foreach($pasien_bayi as $key => $value) { ?>
             <tr>
@@ -105,7 +68,10 @@ table th {font-size: 15px;}
               <td style="text-align: left;">{{$puskesmas[0]->kelurahan}}</td>
               <td style="text-align: left;">{{$value->asal_wilayah}}</td>
               <?php foreach($header_layanan_imunisasi as $key => $value2) { 
-                $tanggal = DB::select("SELECT * FROM layanan_imunisasi li, imunisasi_jenis_layanan ijl WHERE li.id = ijl.id_layanan_imunisasi AND ijl.status_imunisasi = 1 AND li.id_pasien_bayi='".$value->id."' AND ijl.id_jenis_layanan=".$value2->id." AND ijl.tanggal>='".$tanggal_bawah." 00:00:00' AND ijl.tanggal<='".$tanggal_atas." 23:59:59'");
+                $sql = "SELECT * FROM layanan_imunisasi li INNER JOIN imunisasi_jenis_layanan ijl ON li.id = ijl.id_layanan_imunisasi WHERE ijl.status_imunisasi = 1 AND li.id_pasien_bayi=".$value->id_pasien_bayi." AND ijl.id_jenis_layanan=".$value2->id."";
+                $tanggal = DB::select($sql);
+
+                // $tanggal = DB::select("SELECT * FROM layanan_imunisasi li, imunisasi_jenis_layanan ijl WHERE li.id = ijl.id_layanan_imunisasi AND ijl.status_imunisasi = 1 AND li.id_pasien_bayi='".$value->id."' AND ijl.id_jenis_layanan=".$value2->id." AND ijl.tanggal>='".$tanggal_bawah." 00:00:00' AND ijl.tanggal<='".$tanggal_atas." 23:59:59'");
                 if($tanggal)
                 { ?>
                   <td style="text-align: center;">{{date('d-m-Y', strtotime($tanggal[0]->tanggal))}}</td>

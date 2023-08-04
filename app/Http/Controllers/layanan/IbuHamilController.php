@@ -48,7 +48,6 @@ class IbuHamilController extends Controller
      */
     public function create()
     {
-        //
         $noreg = PasienDewasa::generateNoRegister();
         $layanan = DB::select('SELECT format(l.tarif_total,"id-ID") str_tarif_total, format(l.tarif_layanan,"id-ID") str_tarif_layanan, ob.nama, format(ob.subtotal,"id-ID") str_subtotal, l.tarif_total, l.tarif_layanan, ob.subtotal, ob.qty, ob.id id_obat, l.id id_layanan 
             FROM layanan l LEFT JOIN (SELECT o.nama, o.kode_obat, ol.subtotal, ol.id_layanan, ol.qty, o.id FROM obat o LEFT JOIN obat_layanan ol ON o.id = ol.id_obat WHERE o.status_hapus <> 1) ob ON l.id = ob.id_layanan
@@ -203,7 +202,8 @@ class IbuHamilController extends Controller
             $new_pasien_dewasa->tgl_buku_kia = $tgl_buku_kia;
             $new_pasien_dewasa->status_hapus = 0;
             $new_pasien_dewasa->save();
-            // Add Suami
+
+            // ADD SUAMI DAN RIWAYAT KAWIN
             $arr_riwayat_kawin = $riwayat_kawin;
             foreach ($arr_riwayat_kawin as $key => $value) {
                 $arrValue = explode(";", $value);
@@ -430,6 +430,7 @@ class IbuHamilController extends Controller
                     $new_hist_ibu_hamil_obat->id_obat = $value;
                     $new_hist_ibu_hamil_obat->qty = $arrListQty[$key];
                     $new_hist_ibu_hamil_obat->save();
+
                     // UPDATE STOK OBAT
                     $obat_list = Obat::find($value);
                     $sisa_stok = $obat_list->total_pcs - (int)$arrListQty[$key];
@@ -439,9 +440,10 @@ class IbuHamilController extends Controller
             }
 
             DB::commit();
-            // all good
+            // KETIKA FORM WIZARD AMAN MAKA DI COMMIT
             return redirect('/layanan-ibu-hamil/' . $txtNoregis)->with(['message' => 'Data Kehamilan berhasil disimpan.']);
         } catch (\Exception $e) {
+            // KETIKA FORM WIZARD TIDAK AMAN MAKA DI ROLLBACK
             DB::rollback();
             dd($e->getMessage());
             return redirect('/layanan-ibu-hamil/' . $txtNoregis)->with(['danger_message' => 'Data kehamilan gagal disimpan.']);
@@ -502,6 +504,7 @@ class IbuHamilController extends Controller
         //
     }
 
+    //CEK STOK OBAT DI LAYANAN IBU HAMIL
     public function ibu_hamil_cek_stok_obat(Request $request)
     {
         $id_layanan = $request->input('id_layanan');
@@ -536,12 +539,11 @@ class IbuHamilController extends Controller
         $layanan = IbuHamil::where('id', $id)->get();
         $hlayanan = HistoryLayananIbuHamil::where('id_layanan_ibu_hamil', $id)->get();
         $c_persalinan = DB::table('catatan_persalinan')->where('id_layanan_ibu_hamil', $id)->count();
-        // dd($id);
         $informed_consent = DB::select('SELECT l.url_gambar FROM lampiran l WHERE id_layanan = ' . $id . ' AND no_registrasi_pasien = "' . $layanan[0]->no_regis_pasien_dewasa . '"');
-        // dd($informed_consent);
         return view('layanan.ibu_hamil.detail_layanan', compact(['hlayanan', 'layanan', 'c_persalinan', 'informed_consent']));
     }
 
+    //INSERT DB LAMPIRAN
     public function storeImportObservasi(Request $request)
     {
         try {
@@ -573,6 +575,7 @@ class IbuHamilController extends Controller
         return redirect('/layananIbuHamilDetail/detailKartu/' .  $request->idkartuibu)->with(['message'=>'Data observasi berhasil disimpan.']);
     }
 
+    //GET DATA RIWAYAT IBU HAMIL
     public function get_riwayat_hamil(Request $request)
     {
         $id = $request->no_registrasi;
@@ -583,10 +586,10 @@ class IbuHamilController extends Controller
             ORDER BY rk.`kehamilan_ke` DESC", [$id]);
         //$riwayat_hamil = json_decode(json_encode($riwayat_hamil), true);
         $sekarang = isset($riwayat_hamil[0]->kehamilan_ke) ? $riwayat_hamil[0]->kehamilan_ke : 0;
-        //$sekarang =1;
         return $sekarang;
     }
 
+    //TAMBAH DETAIL LAYANAN IBU HAMIL
     public function detailTambah($id)
     {
         if (substr($id, 0, 2) == 'PD') {
@@ -609,8 +612,6 @@ class IbuHamilController extends Controller
                 ORDER BY spd.id DESC
                 LIMIT 1", [$id]);
         }
-        //$pasien = json_decode(json_encode($pasien), true);
-
         $layanan = DB::select('SELECT format(l.tarif_total,"id-ID") str_tarif_total, format(l.tarif_layanan,"id-ID") str_tarif_layanan, ob.nama, format(ob.subtotal,"id-ID") str_subtotal, l.tarif_total, l.tarif_layanan, ob.subtotal, ob.qty, ob.id id_obat, l.id id_layanan 
             FROM layanan l LEFT JOIN (SELECT o.nama, o.kode_obat, ol.subtotal, ol.id_layanan, ol.qty, o.id FROM obat o LEFT JOIN obat_layanan ol ON o.id = ol.id_obat WHERE o.status_hapus <> 1) ob ON l.id = ob.id_layanan
             WHERE l.status_hapus <> 1 AND l.pelayanan = 3');
@@ -621,20 +622,13 @@ class IbuHamilController extends Controller
         return view('layanan.ibu_hamil.detail_tambah', compact(['pasien', 'layanan', 'kspr_table']));
     }
 
+    //TAMBAH DATA HISTORY IBU HAMIL
     public function tambahHistoryHamil(request $request)
-    {
-        
-        //echo "string";
+    {      
         $string = "";
         $string .= "nomor_registrasi <BR>";
         $string .= $request->no_reg . "<BR>";
-
-
         $string .= "data riwayat hamil salin n kb <BR>";
-        //$string .= $request->rdoHamilPertama . "<BR>";
-        //$string .= $request->txthamilke . "<BR>";
-        //$string .= $request->riwayat_hamil . "<BR>";
-
 
         //data riwayat kawin
         $string .= "data riwayat kawin <BR>";
@@ -673,7 +667,6 @@ class IbuHamilController extends Controller
         $string .= $request->txtResikoHIV . "<BR>";
         $string .= $request->txt_penyebab_hiv . "<BR>";
 
-
         $string .= "data pemeriksaan <BR>";
         $string .= $request->txtTB . "<BR>";
         $string .= $request->txtLILA . "<BR>";
@@ -703,7 +696,6 @@ class IbuHamilController extends Controller
         $string .= $request->txtketPayudara . "<BR>";
         $string .= $request->txtTangan . "<BR>";
         $string .= $request->txtRefleks . "<BR>";
-
 
         //data ibu dan ayah
         $string .= "data Ibu <BR>";
@@ -740,7 +732,6 @@ class IbuHamilController extends Controller
 
         $string .= "data Informed Consent <BR>";
         $string .= $request->riwayat_hamil;
-        //$string .=$request->lampiran;
         $string .= $request->id_layanan;
         $string .= $request->harga_layanan;
         $string .= $request->harga_total;
@@ -748,8 +739,6 @@ class IbuHamilController extends Controller
         $string .= $request->list_qty;
         $string .= $request->harga_obat;
         DB::beginTransaction();
-        // dd($request->lampiran);
-
         try {
             $up_pasien_dewasa = PasienDewasa::find($request->no_reg);
             $up_pasien_dewasa->nama = $request->txtNamaibu;
@@ -807,7 +796,6 @@ class IbuHamilController extends Controller
                     $new_suami_pasien_dewasa->nama = $request->txtNamaayah;
           
                     $new_suami_pasien_dewasa->tanggal_lahir = $request->txtTanggalLahirayah == '00-00-0000' ? null : date("Y-m-d", strtotime($request->txtTanggalLahirayah)) ;
-                    
                     $new_suami_pasien_dewasa->agama = $request->txtAgamaayah;
                     $new_suami_pasien_dewasa->alamat = $request->txtAlamatayah;
                     $new_suami_pasien_dewasa->telp = $request->txtPhoneayah;
@@ -906,6 +894,7 @@ class IbuHamilController extends Controller
             $new_ibu_hamil->status_hapus = 0;
             $new_ibu_hamil->save();
             $id_new_ibu_hamil = $new_ibu_hamil->id;
+
             // INSERT RIWAYAT KEHAMILAN
             if ($request->rdoHamilPertama != "ya") {
 
@@ -977,7 +966,6 @@ class IbuHamilController extends Controller
                 $new_riwayat_kehamilan->status_hapus = 0;
                 $new_riwayat_kehamilan->save();
             }
-
 
             if ($request->lampiran) {
                 foreach ($request->lampiran as $key => $value) {
@@ -1082,12 +1070,9 @@ class IbuHamilController extends Controller
     }
 
 
-    // Kunjungan
-
+    // BUAT KUNJUNGAN IBU HAMIL
     public function createKunjunganIbuHamil($id)
     {
-        // $id=$request->id_layanan;
-        // $layanan = JenisLayanan::where('pelayanan',3)->get();
         $layanan = DB::select('SELECT format(l.tarif_total,"id-ID") str_tarif_total, format(l.tarif_layanan,"id-ID") str_tarif_layanan, ob.nama, format(ob.subtotal,"id-ID") str_subtotal, l.tarif_total, l.tarif_layanan, ob.subtotal, ob.qty, ob.id id_obat, l.id id_layanan 
         FROM layanan l LEFT JOIN (SELECT o.nama, o.kode_obat, ol.subtotal, ol.id_layanan, ol.qty, o.id FROM obat o LEFT JOIN obat_layanan ol ON o.id = ol.id_obat WHERE o.status_hapus <> 1) ob ON l.id = ob.id_layanan
         WHERE l.status_hapus <> 1 AND l.pelayanan = 3');
@@ -1095,6 +1080,7 @@ class IbuHamilController extends Controller
         return view('layanan.ibu_hamil.tambah_history_kunjungan', compact(['id', 'layanan']));
     }
 
+    //ADD DB KUNJUNGAN IBU HAMIL
     public function tambahKunjunganHamil(request $request)
     {
 
@@ -1126,10 +1112,7 @@ class IbuHamilController extends Controller
         $idObat = explode(",", $arrObat[0]);
         $qtyObat = explode(",", $arrObat[1]);
 
-        //return $string;
-
         DB::beginTransaction();
-        // dd($request->txtTanggal);
         try {
             $new_history_layanan_ibu_hamil = new HistoryLayananIbuHamil();
             $new_history_layanan_ibu_hamil->id_layanan_ibu_hamil = $request->id_layanan;
@@ -1172,12 +1155,9 @@ class IbuHamilController extends Controller
                     $new_his_obat->id_obat = $value;
                     $new_his_obat->qty = $qtyObat[$key];
                     $new_his_obat->save();
-                    // $obat->ibuHamil()->attach( $id_new_history_layanan_ibu_hamil,['qty' =>  $qtyObat[$key]]);
-
                     $total_harga_obat += $ttl_hrg_obt;
                 }
             }
-
             $total_harga = $total_harga_obat + (int)str_replace(',', '', $request->harga_layanannya);
             $new_transaksi = new Transaksi();
             $new_transaksi->jenis_layanan = "4";
@@ -1189,13 +1169,11 @@ class IbuHamilController extends Controller
             $new_transaksi->users_id = Auth::user()->id;
             $new_transaksi->save();
 
-
             DB::commit();
             return redirect('/layananIbuHamilDetail/detailKartu/' . $request->id_layanan)->with(['message' => 'Data history kehamilan berhasil disimpan.']);
         } catch (\Exception $e) {
             DB::rollback();
             dd($e->getMessage());
-            //Log::error($e->getMessage());
             return redirect('/layananIbuHamilDetail/detailKartu/' . $request->id_layanan)->with(['danger_message' => 'Data history kehamilan gagal disimpan.']);
         }
     }
@@ -1205,10 +1183,8 @@ class IbuHamilController extends Controller
     {
         $header = DB::select('SELECT hkspr.id, hkspr.judul, hkspr.total_skor, lh.no_regis_pasien_dewasa, hkspr.id_layanan_ibu_hamil, lh.rujukan_terencana FROM header_kspr hkspr LEFT JOIN layanan_ibu_hamil lh ON lh.id = hkspr.id_layanan_ibu_hamil WHERE hkspr.id_layanan_ibu_hamil = "'.$id.'"');
         // dd($header);
-        // $header_kspr = HeaderKspr::where('id_layanan_ibu_hamil',$id)->get();
         $header_kspr = json_decode(json_encode($header), true);
         // dd($header_kspr);
-
         $arrData = array();
         $isLast = false;
         foreach ($header_kspr as $key => $value) {
@@ -1231,7 +1207,6 @@ class IbuHamilController extends Controller
         }
         // dd($arrData);
         // dd($isLast);
-
         return view('layanan.ibu_hamil.detail_kartu_Kspr', compact(['arrData', 'header_kspr', 'isLast']));
     }
 
@@ -1262,7 +1237,6 @@ class IbuHamilController extends Controller
             $id_header_kspr = $new_header_kspr->id;
 
             $kspr = DB::select('SELECT * FROM master_kspr WHERE status_hapus = 0');
-            // $kspr_table = json_decode(json_encode($kspr), true);
             $kspr_table = MasterKspr::where('status_hapus',0)->get();
             // dd($list_kspr);
 
@@ -1307,7 +1281,7 @@ class IbuHamilController extends Controller
         return redirect()->back()->with(['message'=>'Kartu KSPR berhasil disimpan.']);
     }
 
-    // Penapisan
+    // PENAPISAN
     public function indexPenapisan($id)
     {
         $idibuhamil = $id;
@@ -1372,10 +1346,9 @@ class IbuHamilController extends Controller
         return redirect()->back()->with(['message'=>'Kartu KSPR berhasil disimpan.']);
     }
 
-    // Observasi
+    // OBSERVASI
     public function indexObservasi($idibu)
     {
-        // $observasi = DB::select("SELECT * FROM header_lembar_observasi WHERE id_layanan_ibu_hamil = '".$idibu."'");
         $observasi = HeaderLembarObservasi::where('id_layanan_ibu_hamil',$idibu)->get();
         $hist_observasi = [];
         if(count($observasi) > 0){
@@ -1430,7 +1403,6 @@ class IbuHamilController extends Controller
     public function indexObservasiKala($idkartuobservasi)
     {
         $idkartuobservasi = $idkartuobservasi;
-
         $layanan = DB::select("SELECT dp.no_regis, dp.nama, dp.tanggal_lahir, dp.agama, dp.alamat, dp.telp, dp.idkartuibu FROM header_lembar_observasi ho LEFT JOIN (SELECT p.no_regis, p.nama, p.tanggal_lahir, p.agama, p.alamat, p.telp, li.id idibuhamil, li.id idkartuibu FROM layanan_ibu_hamil li LEFT JOIN pasien_dewasa p ON li.no_regis_pasien_dewasa = p.no_regis) dp ON ho.id_layanan_ibu_hamil = dp.idibuhamil WHERE ho.id = '".$idkartuobservasi."'");
         $layanankbArr = json_decode(json_encode($layanan), true);
 
@@ -1470,11 +1442,9 @@ class IbuHamilController extends Controller
         return redirect('/layanan-ibu-hamil-observasi/'.$request->input('idkartuibu'))->with(['message'=>'Kartu KSPR berhasil disimpan.']);
     }
 
-    // History Persalinan
+    // HISTORY PERSALINAN
     public function create_history_persalinan($id)
     {
-        // $id=$request->l_ibu_hamil;
-
         $layanan = DB::select('SELECT format(l.tarif_total,"id-ID") str_tarif_total, format(l.tarif_layanan,"id-ID") str_tarif_layanan, ob.nama, format(ob.subtotal,"id-ID") str_subtotal, l.tarif_total, l.tarif_layanan, ob.subtotal, ob.qty, ob.id id_obat, l.id id_layanan 
             FROM layanan l LEFT JOIN (SELECT o.nama, o.kode_obat, ol.subtotal, ol.id_layanan, ol.qty, o.id FROM obat o LEFT JOIN obat_layanan ol ON o.id = ol.id_obat WHERE o.status_hapus <> 1) ob ON l.id = ob.id_layanan
             WHERE l.status_hapus <> 1 AND l.pelayanan = 5');
@@ -1482,7 +1452,6 @@ class IbuHamilController extends Controller
         $layanan_ibu_hamil = DB::table('layanan_ibu_hamil')->where('id',$id)->get();
         $noreg = $layanan_ibu_hamil[0]->no_regis_pasien_dewasa;
         $data_ibu = DB::table('pasien_dewasa')->where('no_regis',$noreg)->get();
-        // $id_pasien_dewasa = $data_ibu[0]->id;
         $data_ayah = DB::table('suami_pasien_dewasa')->where('no_regis_pasien_dewasa',$noreg)->get();
         // dd($layanan);
 
@@ -1528,9 +1497,8 @@ class IbuHamilController extends Controller
             $new_catatan_persalinan->save();
 
             $id_catatan_persalinan = $new_catatan_persalinan->id;
-            // dd($id_catatan_persalinan);
 
-            // Add In Catatan Nifas
+            // Add DB Catatan Nifas
             $new_catatan_nifas = new CatatanNifas();
             $new_catatan_nifas->users_id = Auth::user()->id;
             $new_catatan_nifas->id_catatan_persalinan = $id_catatan_persalinan;
@@ -1559,7 +1527,6 @@ class IbuHamilController extends Controller
   
             $layanan_klinik_inserted = $new_catatan_nifas->id;
             
-
             $total_harga_obat = 0;
             // dd($idObat);
             if($idObat[0]!== ''){
@@ -1582,7 +1549,6 @@ class IbuHamilController extends Controller
             
 
             $total_harga = $total_harga_obat+(int)str_replace(',', '', $request->harga_layanannya);
-            // dd($total_harga);
 
             $new_transaksi = new Transaksi();
             $new_transaksi->users_id = Auth::user()->id;
@@ -1593,23 +1559,6 @@ class IbuHamilController extends Controller
             $new_transaksi->total_harga = $total_harga;
             $new_transaksi->tanggal = date("Y-m-d H:i:s");
             $new_transaksi->save();
-            // dd("dasda");
-       
-            // DB::table('surat_keterangan_lahir')->insert(
-            //     [
-            //         'id_layanan' => $request->id_layanan_ibu_hamil,
-            //         'nama_ibu' => $request->txtNamaIbu,
-            //         'nama_ayah' => $request->txtNamaAyah,
-            //         'alamat' => $request->txtAlamat,
-            //         'pada_hari' => $request->txtPadaHari,
-            //         'tanggal' => date("Y-m-d", strtotime($request->txtTanggalnya)).' '.date("H:i:s"),
-            //         'anak_ke' => $request->txtAnakKe,
-            //         'berat_badan' => $request->txtBeratBadan,
-            //         'panjang_badan'=> $request->txtPanjangBadan,
-            //         'diberi_nama' => $request->txtDiberiNama
-            //     ]
-            // );
-            
             
             DB::commit();
             return redirect('/layananIbuHamilDetail/detailKartu/' . $request->id_layanan_ibu_hamil)->with(['message' => 'Data history kehamilan berhasil disimpan.']);
@@ -1617,19 +1566,13 @@ class IbuHamilController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
             dd($e->getMessage());
-            // print_r($e->getMessage());
-            // die();
-            // Log::error($e->getMessage());
             return redirect('/layananIbuHamilDetail/detailKartu/'.$request->id_layanan_ibu_hamil)->with(['danger_message'=>'Data history persalinan gagal disimpan.']);
         }
         
-        // return redirect('/ibuHamilDetailPersalinan?id_layanan='.$request->id_layanan_ibu_hamil)->with(['message'=>'Data history persalinan berhasil disimpan.']);
     }
 
     public function detailTambahNifas($id)
-    {
-        // $id=$request->id_persalinan;
-        
+    {        
         $layanan = DB::select('SELECT format(l.tarif_total,"id-ID") str_tarif_total, format(l.tarif_layanan,"id-ID") str_tarif_layanan, ob.nama, format(ob.subtotal,"id-ID") str_subtotal, l.tarif_total, l.tarif_layanan, ob.subtotal, ob.qty, ob.id id_obat, l.id id_layanan 
             FROM layanan l LEFT JOIN (SELECT o.nama, o.kode_obat, ol.subtotal, ol.id_layanan, ol.qty, o.id FROM obat o LEFT JOIN obat_layanan ol ON o.id = ol.id_obat WHERE o.status_hapus <> 1) ob ON l.id = ob.id_layanan
             WHERE l.status_hapus <> 1 AND l.pelayanan = 6');
@@ -1642,11 +1585,9 @@ class IbuHamilController extends Controller
     {
         $id_catatan_persalinan=$request->id_persalinan;
 
-        // dd($id_catatan_persalinan);
         $catatan_persalinan= DB::table('catatan_persalinan')->where('id_layanan_ibu_hamil',$id_catatan_persalinan)->get();
         $id_layanan_ibu_hamil = $catatan_persalinan[0]->id_layanan_ibu_hamil;
 
-        
         $arrObat = explode(";", $request->obatnya);
         $idObat = explode(",", $arrObat[0]);
         $qtyObat = explode(",", $arrObat[1]);
@@ -1654,7 +1595,7 @@ class IbuHamilController extends Controller
         DB::beginTransaction();
 
         try {
-            // INSERT History Layanan Ibu Hamil
+            // INSERT History catatan nifas Layanan Ibu Hamil
             $new_catatan_nifas = new CatatanNifas();
             $new_catatan_nifas->users_id = Auth::user()->id;
             $new_catatan_nifas->id_catatan_persalinan = $catatan_persalinan[0]->id;
@@ -1742,9 +1683,5 @@ class IbuHamilController extends Controller
             dd($e->getMessage());
             return redirect('/layananIbuHamilDetail/detailKartu/'.$id_layanan_ibu_hamil)->with(['danger_message'=>'Data history nifas gagal disimpan.']);
         }
-        
-        // return redirect('/ibuHamilDetailPersalinan?id_layanan='.$id_layanan_ibu_hamil)->with(['message'=>'Data history nifas berhasil disimpan.']);
     }    
-
 }
-// 

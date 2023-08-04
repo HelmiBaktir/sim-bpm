@@ -29,6 +29,7 @@ margin-top:5%;
 @endsection
 <!-- content -->
 @section('content')
+
 <!-- modal reschecule -->
 <div class="modal fade" id="modalReschecule" role="dialog"> 
   <div class="modal-dialog" role="document"> 
@@ -59,6 +60,7 @@ margin-top:5%;
     </div> 
   </div>
   <!-- tutup modal reschecule -->
+
 <br>
 <div class="container-fluid">
   <div class="row mb-2">
@@ -182,13 +184,10 @@ margin-top:5%;
                           <div class="row">
                             <div class="col-lg-6">
 
-                              
-
                               <?php
                                 $paketKiri = DB::select('SELECT * FROM layanan WHERE pelayanan = 1');
                                 if($paketKiri)
                                 {
-                                  // var_dump((array)$paket);die();  
                                   for($a=0; $a<round(count($paketKiri)/2,0,PHP_ROUND_HALF_UP); $a++) {
                                   $id_layanan_imunisasi = DB::select("SELECT * FROM layanan_imunisasi WHERE id_pasien_bayi="."'".$bayiArr[0]['id']."'");
                                   $cek1 = DB::select("SELECT * FROM imunisasi_jenis_layanan WHERE id_jenis_layanan=".$paketKiri[$a]->id." AND id_layanan_imunisasi=".$id_layanan_imunisasi[0]->id); 
@@ -426,6 +425,7 @@ margin-top:5%;
 
 </div>
 @endsection
+
 <!-- plugin js -->
 @section('plugin_js')
 
@@ -462,8 +462,6 @@ margin-top:5%;
     }
     ?>
 
-       
-
   });
   function reschedule(idJenisLayanan)
   {
@@ -496,22 +494,7 @@ margin-top:5%;
     dpf.settings.defaultFile = ic;
     dpf.destroy();
     dpf.init();  
-
-
-            // if(status == 1)
-            // {
-            //   $("#imgIc").show();
-            //   $("#dpIC").hide();
-            //   $("#btnSimpanIc").hide();
-            //   document.getElementById('imgIc').src = ic;
-            // }
-            // if(status == 2)
-            // {
-            //   $("#imgIc").hide();
-            //   $("#dpIC").show();
-            //   $("#btnSimpanIc").show();
-            // }
-            
+           
     document.getElementById('lblNamaIc').innerHTML = nama;
   }
 </script>

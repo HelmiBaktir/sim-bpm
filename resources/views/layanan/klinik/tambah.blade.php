@@ -209,13 +209,8 @@ transform: translateY(5px);
                       $obat = DB::table('obat')->where('status_hapus',0)->where('total_pcs','>',0)->get();
                       ?>
                       @foreach($obat as $value)
-                      <option value="{{$value->id}}" data-value="{{$value->harga}}" stok-value="{{$value->total_pcs}}">{{$value->nama}}</option>
+                      <option value="{{$value->id}}" data-value="{{$value->harga}}" stok-value="{{$value->total_pcs}}">{{$value->nama}} EXP (( {{$value->tanggal_kadaluarsa}} ))</option>
                       @endforeach
-                      <!-- <option value="paramex">Paramex</option>
-                      <option value="konidin">Konidin</option>
-                      <option value="komix">komix</option>
-                      <option value="obh">OBH</option>
-                      <option value="promaag">Promaag</option> -->
                     </select>
                   </label>
                   <label class="control-label col-sm-2" for="nama"><span class="btn btn-primary" onclick="tambah_tabel()">Tambah</span></label>
@@ -256,15 +251,19 @@ transform: translateY(5px);
                   </div>
                 </div><!-- /.row -->
                 <div class="form-group">
+                  <label class="control-label col-sm-2" for="nama">Harga Layanan:</label>
+                  <label class="control-label col-sm-4" style="font-weight: normal;">Rp. 150.000  (Harga menyesuaikan tindakan bidan)</label>
+                </div>
+                <div class="form-group">
                   <label class="control-label col-sm-2" for="nama">Harga Layanan (Rp)</label>
                   <label class="control-label col-sm-4" for="nama">
-                    <input type="text" class="form-control" id="txtHargaLayanan" name="txtHargaLayanan" onkeyup="hitung_total_harga()" placeholder="" style="text-align: right;" value="0" >
+                    <input type="text" class="form-control" id="txtHargaLayanan" name="txtHargaLayanan" onkeyup="hitung_total_harga()" placeholder="" style="text-align: right;" value="150000" >
                   </label>
                 </div>
                 <div class="form-group">
                   <label class="control-label col-sm-2" for="nama">Total Harga :</label>
                   <label class="control-label col-sm-4" style="font-weight: normal;" id="lbl_total_harga">
-                    Rp. 0
+                    Rp. 150.000
                   </label>
                 </div>
 
@@ -360,13 +359,13 @@ transform: translateY(5px);
                 <div class="form-group">
                   <label class="control-label col-sm-2" for="nama">Obat</label>
                   <label class="control-label col-sm-4" for="nama">
-                    <select class="form-control" id="txtObat2" name="txtObat2" >
+                    <select class="form-control select2" id="txtObat2" name="txtObat2" >
                       <option selected disabled value="">Obat...</option>
                       <?php
                       $obat = DB::table('obat')->where('status_hapus',0)->where('total_pcs','>',0)->get();
                       ?>
                       @foreach($obat as $value)
-                      <option value="{{$value->id}}" data-value="{{$value->harga}}" stok-value="{{$value->total_pcs}}">{{$value->nama}}</option>
+                      <option value="{{$value->id}}" data-value="{{$value->harga}}" stok-value="{{$value->total_pcs}}">{{$value->nama}} EXP (( {{$value->tanggal_kadaluarsa}} ))</option>
                       @endforeach
                       <!-- <option value="paramex">Paramex</option>
                       <option value="konidin">Konidin</option>
@@ -413,18 +412,21 @@ transform: translateY(5px);
                   </div>
                 </div><!-- /.row -->
                 <div class="form-group">
-                  <label class="control-label col-sm-2" for="nama">Harga Layanan (Rp)</label>
+                  <label class="control-label col-sm-2" for="nama">Harga Layanan:</label>
+                  <label class="control-label col-sm-4" style="font-weight: normal;">Rp. 150.000  (Harga menyesuaikan tindakan bidan)</label>
+                </div>
+                <div class="form-group">
+                  <label class="control-label col-sm-2" for="nama">Harga Layanan (Rp) </label>
                   <label class="control-label col-sm-4" for="nama">
-                    <input type="text" class="form-control" id="txtHargaLayanan2" name="txtHargaLayanan2" onkeyup="hitung_total_harga2()" placeholder="" style="text-align: right;" value="0" >
+                    <input type="text" class="form-control" id="txtHargaLayanan2" name="txtHargaLayanan2" onkeyup="hitung_total_harga2()" placeholder="" style="text-align: right;" value="150000" >
                   </label>
                 </div>
                 <div class="form-group">
                   <label class="control-label col-sm-2" for="nama">Total Harga :</label>
                   <label class="control-label col-sm-4" style="font-weight: normal;" id="lbl_total_harga2">
-                    Rp. 0
+                    Rp. 150.000
                   </label>
                 </div>
-
                 <div class="form-group">
                   <button type="submit" name="simpan" class="btn btn-primary"  onclick="opensimpanmodal2()"><i class="fa fa-save nav-icon"></i> Simpan</button>
                   <!-- <button type="submit" name="simpan" class="btn btn-primary"><i class="fa fa-save nav-icon"></i> Simpan</button> -->
@@ -554,13 +556,17 @@ transform: translateY(5px);
     
     $('#tabelDataObat tr').each(function(index) {  
       if(index!=0){
-        hargaObatnya += parseInt($(":nth-child(6)", $(this)).text().replace(',', ''));
+        hargaObatnya += parseInt($(":nth-child(6)", $(this)).text().replace('.', ''));
+        // console.log($(":nth-child(6)", $(this)).text().replace(',', ''))
       }
     });
     
     var harga_layanan = $('#txtHargaLayanan').unmask() =="" ? 0 : $('#txtHargaLayanan').unmask();
     var total_harga = hargaObatnya + parseInt(harga_layanan);
+    console.log(hargaObatnya)
     $('#lbl_total_harga').html("Rp. "+parseInt(total_harga).toLocaleString())
+
+    document.getElementById("lbl_total_harga").innerHTML = "Rp. "+(total_harga).toLocaleString()+",-";
 
   }
 
@@ -810,7 +816,7 @@ transform: translateY(5px);
     
     $('#tabelDataObat2 tr').each(function(index) {  
       if(index!=0){
-        hargaObatnya += parseInt($(":nth-child(6)", $(this)).text().replace(',', ''));
+        hargaObatnya += parseInt($(":nth-child(6)", $(this)).text().replace('.', ''));
       }
     });
     

@@ -331,7 +331,7 @@ margin-top:5%;
                                       <h3 class="card-title">{{ $satuanKiri[$c]->nama }}</h3>
                                     </div>
                                     <div class="card-body">
-
+                                    
                                       <div class="form-group">
                                       <label class="control-label col-sm-7" for="nama">
                                         <div class="input-group">
@@ -525,27 +525,27 @@ margin-top:5%;
       }
       else if(paket==2)
       {
-        var arrPaket = new Array();
-        $("input:text[name2='dtpPaket1']").each(function(){
-          arrPaket.push($(this).attr('id'));
-        });
-        for (var i = 0; i <arrPaket.length; i++) {
-          document.getElementById(arrPaket[i]).style.backgroundColor ="white";
-        }
+        // var arrPaket = new Array();
+        // $("input:text[name2='dtpPaket1']").each(function(){
+        //   arrPaket.push($(this).attr('id'));
+        // });
+        // for (var i = 0; i <arrPaket.length; i++) {
+        //   document.getElementById(arrPaket[i]).style.backgroundColor ="white";
+        // }
 
-        var arrPaket = new Array();
-        $("input:text[name2='dtpPaket2']").each(function(){
-          arrPaket.push($(this).attr('id'));
-        });
-        for (var i = 0; i <arrPaket.length; i++) {
-          document.getElementById(arrPaket[i]).style.backgroundColor ="white";
-          if(document.getElementById(arrPaket[i]).value=="")
-          {
-            document.getElementById(arrPaket[i]).style.backgroundColor ="#ffe6e6";
-            document.documentElement.scrollTop = 0;
-            returnClear = 2;
-          }
-        }
+        // var arrPaket = new Array();
+        // $("input:text[name2='dtpPaket2']").each(function(){
+        //   arrPaket.push($(this).attr('id'));
+        // });
+        // for (var i = 0; i <arrPaket.length; i++) {
+        //   document.getElementById(arrPaket[i]).style.backgroundColor ="white";
+        //   if(document.getElementById(arrPaket[i]).value=="")
+        //   {
+        //     document.getElementById(arrPaket[i]).style.backgroundColor ="#ffe6e6";
+        //     document.documentElement.scrollTop = 0;
+        //     returnClear = 2;
+        //   }
+        // }
         
       }
       return returnClear;

@@ -88,6 +88,14 @@ aria-labelledby="favoritesModalLabel">
     <p id="lblStokDetail"></p>
     <label>Tanggal Kadaluarsa:</label>
     <p id="lblTglDetail"></p> 
+    <label>Kartu Stok:</label>
+    <p>
+    @foreach($kartustok as $key => $value) 
+    <tr>
+      <td>{{$value->status}}</td>
+    </tr>
+    </p>
+    @endforeach
   </div>
   <div class="form-group">
     <input type="hidden" name="_token" value="{!!csrf_token()!!}">
@@ -271,6 +279,11 @@ aria-labelledby="favoritesModalLabel">
                       <label class="control-label col-sm-8" for="nama">
                         <select class="form-control" id="txtSatuanJmlTambah" name="txtSatuanJmlTambah"></select>
                         <label style="display: none; font-weight: normal; font-size: 10pt" id="satuanTambah"></label>
+                      </label>
+                    </div>
+                    <div class="form-group  row">
+                      <label class="control-label col-sm-3" for="nama">Catatan:</label>
+                      <textarea class="form-control" rows="3" id="txtCttnTambah" name="txtCttnTambah" placeholder="Enter ..." autocomplete="off"></textarea>
                       </label>
                     </div>
                     <div class="form-group">

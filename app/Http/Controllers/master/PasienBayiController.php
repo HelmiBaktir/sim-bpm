@@ -181,8 +181,6 @@ class PasienBayiController extends Controller
 
     }
 
-  
-
     public function exportTemplate()
     {
         Excel::create('template_pasien_bayi', function ($excel) {

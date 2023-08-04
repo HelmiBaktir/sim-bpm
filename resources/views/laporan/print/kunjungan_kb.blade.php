@@ -102,11 +102,10 @@
               <tr>
                 <td style="text-align: center;"><?php echo ($key+1); ?></td>
                 <?php
-
                 $no_reg = $value->no_registrasi_pasien;
-                $data_ibu = DB::table('pasien_dewasa')->where('no_registrasi', $no_reg)->get();
-                $id_ibu = $data_ibu[0]->id;
-                $data_ayah = DB::table('suami_pasien_dewasa')->where('id_pasien_dewasa', $id_ibu)->get();
+                $data_ibu = DB::table('pasien_dewasa')->where('no_regis', $no_reg)->get();
+                $id_ibu = $data_ibu[0]->no_regis;
+                $data_ayah = DB::table('suami_pasien_dewasa')->where('no_regis_pasien_dewasa', $id_ibu)->get();
                 if(count($data_ayah) > 0){
                     $nama_ayah = $data_ayah[0]->nama;
                 }
@@ -115,26 +114,25 @@
                 }
                 
                 $layanan = DB::table('layanan')->where('id',$value->id_jenis_layanan)->get();
-
                 ?>
                 <td>{{date('d-m-Y', strtotime($value->tgl_status_peserta))}}</td>
                 <td>{{$data_ibu[0]->nama}}</td>
                 <td>{{$nama_ayah}}</td>
                 <td>{{floor((time() - strtotime($data_ibu[0]->tanggal_lahir)) / 31556926)}}</td>
                 <td>{{$data_ibu[0]->alamat}}</td>
-                <td></td>
+                <td>{{$value->perd_per_vag}}</td>
                 <td></td>
                 <td>{{$value->jumlah_anak_laki+$value->jumlah_anak_perempuan}}</td>
-                <td></td>
+                <td>{{$value->perd_per_vag}}</td>
                 <td>{{$layanan[0]->nama}}</td>
+                <td>{{$value->fluoralbus}}</td>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td>{{$value->posisi_rahim}}</td>
+                <td>{{$value->tumor}}</td>
+                <td>{{$value->genetalia_luar_dalam}}</td>
+                <td>{{$value->ku}}</td>
                 <td></td>
                 <td></td>
               </tr>

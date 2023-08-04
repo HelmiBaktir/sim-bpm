@@ -235,10 +235,6 @@ class PasienDewasaController extends Controller
        
         $dompdf = new Dompdf();
         $customPaper = array(0,0,325,500);
-        // $dompdf->setPaper($customPaper);
-        // $dompdf->setPaper('A5','landscape');
-        // $dompdf->setPaper('2in', '3.5in', 'landscape');
-        // $dompdf->setPaper('auto', 'auto');
         $dompdf->setPaper($customPaper, 'landscape');
         $dompdf->setOptions($options);
         $dompdf->getCanvas();

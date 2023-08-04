@@ -101,8 +101,15 @@ class ImunisasiController extends Controller
 
             //JADWAL
             $layanan_all = JenisLayanan::where('pelayanan',$jenis_paket)->where('status_hapus',0)->get();
+            // dd($request->input('dtp'.$layanan_all[1]->id));
             foreach ($layanan_all as $key => $value) {
-                if($request->input('dtp'.$layanan_all[$key]->id) != 'NULL')
+                // if($request->input('dtp'.$layanan_all[$key]->id) !== null){
+                //     dd("dadasaaaa");
+                // }
+                // else{
+                //     dd("adada");
+                // }
+                if($request->input('dtp'.$layanan_all[$key]->id) !== null)
                 {
                     $new_imunisasi_layanan = new ImunisasiJenisLayanan();
                     $new_imunisasi_layanan->id_layanan_imunisasi = $id_new_imunisasi;

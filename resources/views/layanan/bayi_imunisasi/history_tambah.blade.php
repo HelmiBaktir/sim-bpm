@@ -27,6 +27,7 @@ transform: translateY(5px);
     {{ session('danger_message') }}
   </div>
 @endif
+
 <!-- modal detail -->
 <div class="modal fade" id="modalDetail" role="dialog" 
 aria-labelledby="favoritesModalLabel">
@@ -77,7 +78,6 @@ aria-labelledby="favoritesModalLabel">
       <FORM method="post" action="<?php echo URL::to('/kecamatan/edit')?>">
         <div class="form-group">
           <p>Informed Consent Pasien <span id="lblNamaIc" style="font-weight: bold"></span></p>
-          <!-- <img id="imgIc" style="width:100%; height:100%;" src=""> -->
           <div id="dpIC">
             <input type="file" id="input-file-now" class="dropify" data-show-remove="false"/>
           </div>
@@ -148,6 +148,7 @@ aria-labelledby="favoritesModalLabel">
   </div>
 </div>
 <!-- tutup modal tambah-->
+
 <!-- modal simpan -->
 <div class="modal fade" id="modalSimpan" name="modalSimpan" role="dialog" aria-labelledby="favoritesModalLabel"> 
   <div class="modal-dialog" role="document"> 

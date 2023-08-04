@@ -146,7 +146,7 @@ transform: translateY(5px);
                 <select class="form-control select2" id="txtObat" name="txtObat" >
                   <option selected disabled value="">Obat...</option>
                   @foreach($obat as $value)
-                  <option value="{{$value->id}}" data-value="{{$value->harga}}" stok-value="{{$value->total_pcs}}">{{$value->nama}}</option>
+                  <option value="{{$value->id}}" data-value="{{$value->harga}}" stok-value="{{$value->total_pcs}}">{{$value->nama}} EXP(( {{$value->tanggal_kadaluarsa}} ))</option>
                   @endforeach
                 </select>
               </label>
@@ -178,9 +178,13 @@ transform: translateY(5px);
               </div>
             </div><!-- /.row -->
             <div class="form-group">
+                  <label class="control-label col-sm-2" for="nama">Harga Layanan:</label>
+                  <label class="control-label col-sm-4" style="font-weight: normal;">Rp. 150.000  (Harga menyesuaikan tindakan bidan)</label>
+            </div>
+            <div class="form-group">
               <label class="control-label col-sm-2" for="nama">Harga Layanan (Rp)</label>
               <label class="control-label col-sm-4" for="nama">
-                <input type="text" class="form-control" id="txtHargaLayanan" name="txtHargaLayanan" onkeyup="hitung_total_harga()" placeholder="" style="text-align: right;" value="0" required>
+                <input type="text" class="form-control" id="txtHargaLayanan" name="txtHargaLayanan" onkeyup="hitung_total_harga()" placeholder="" style="text-align: right;" value="150000" required>
               </label>
             </div>
             <div class="form-group">
@@ -280,7 +284,7 @@ transform: translateY(5px);
     
     $('#tabelDataObat tr').each(function(index) {  
       if(index!=0){
-        hargaObatnya += parseInt($(":nth-child(6)", $(this)).text().replace(',', ''));
+        hargaObatnya += parseInt($(":nth-child(6)", $(this)).text().replace('.', ''));
       }
     });
     

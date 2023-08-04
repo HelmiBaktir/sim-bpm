@@ -176,11 +176,12 @@ class LaporanController extends Controller
         $tanggal_atas_explode = explode("/",$tanggal[1]);
         $tanggal_atas = $tanggal_atas_explode[2]."-".$tanggal_atas_explode[0]."-".$tanggal_atas_explode[1];
         
-        $laporan = DB::table("layanan_kb")->where('tgl_status_peserta','>=', $tanggal_bawah." 00:00:00")->where('tgl_status_peserta','<=', $tanggal_atas." 23:59:59")->get();
+        $laporan = DB::table("layanan_kb")->where('created_at','>=', $tanggal_bawah." 00:00:00")->where('created_at','<=', $tanggal_atas." 23:59:59")->get();
 
         $judul = 'Laporan Kunjungan KB BPM. Lita Anggraeni Amd. Keb'."<BR>".'Periode '.date("d-m-Y", strtotime($tanggal_bawah)).' - '.date("d-m-Y", strtotime($tanggal_atas));
 
         $dompdf = new Dompdf();
+        $dompdf->setPaper('A4', 'landscape');
         $dompdf->loadHtml(View::make('laporan.print.kunjungan_kb', 
         [
             'laporan' => $laporan, 
@@ -240,6 +241,8 @@ class LaporanController extends Controller
         ])->render());
         $dompdf->render();
         $title = $judul;
+        // dd($pasien_bayi);
+        // dd($header_layanan_imunisasi);
         return $dompdf->stream($title, ['Attachment' => true]);
     }
 

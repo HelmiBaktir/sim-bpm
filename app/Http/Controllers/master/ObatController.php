@@ -4,9 +4,11 @@ namespace App\Http\Controllers\master;
 
 use Shuchkin\SimpleXLSX;
 use App\Models\master\Obat;
+use App\Models\master\KartuStokObat;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ObatController extends Controller
 {
@@ -21,7 +23,7 @@ class ObatController extends Controller
         //
         $obat = Obat::where('status_hapus',  0)->orderBy('id', 'desc')->get();
         // dd( $obat );
-        return view('master.obat.index', compact('obat'));
+        return view('master.obat.index', compact('obat','kartustok'));
     }
 
     /**
@@ -104,7 +106,8 @@ class ObatController extends Controller
 
     public function update(Request $request, Obat $obat)
     {
-        //
+        //be
+        DB::beginTransaction();
         try {
             $jenis = $request->jenis_update;
             if ($jenis == 'data_all') {
@@ -114,27 +117,46 @@ class ObatController extends Controller
                 $obat->catatan = $request->txtCttnEdit;
                 $obat->tanggal_kadaluarsa = date('Y-m-d', strtotime($request->tglkadaluarsaEdit));
                 $obat->save();
+                DB::commit();
                 return redirect()->back()->with('message', 'Data Obat berhasil diganti.');
             } else if ($jenis == 'data_harga') {
                 $harganya = (int)str_replace(',', '', $request->txtHargaEdit);
                 $harga = $harganya / $obat->pcs;
                 $obat->harga = $harga;
                 $obat->save();
+                DB::commit();
                 return redirect()->back()->with('message', 'Harga Obat berhasil diganti.');
             } else if ($jenis == 'data_tambah_stok') {
+                $jumlah_obat=0;
                 $stok_saat_ini = $obat->total_pcs;
                 $stok_update = $stok_saat_ini + ($request->txtSatuanJmlTambah == 0 ? $request->txtJmlTambah : $request->txtJmlTambah * $obat->psc);
-                $obat->total_pcs = $stok_update;
-                $obat->save();
-                return redirect()->back()->with('message', 'Stok Obat berhasil ditambah.');
+             
+                if ($stok_update > $stok_saat_ini) {
+                    $obat->total_pcs = $stok_update;
+                    $obat->save();
+                    $kartuStokObat = new KartuStokObat();
+                    $kartuStokObat->obat_id = $obat->id;
+                    $kartuStokObat->tanggal = now(); 
+                    $kartuStokObat->status = 'Tambah Stok';
+                    $kartuStokObat->jumlah = $request->txtJmlTambah;
+                    $kartuStokObat->satuan = $request->txtSatuanJmlTambah;
+                    $kartuStokObat->keterangan = $request->txtCttnTambah;
+                    $kartuStokObat->save();
+                    DB::commit();
+                    return redirect()->back()->with('message', 'Stok Obat berhasil ditambah.');
+                }
             } else {
                 $stok_saat_ini = $obat->total_pcs;
                 $stok_update = $stok_saat_ini - ($request->txtSatuanJmlKurang == 0 ? $request->txtJmlKurang : $request->txtJmlKurang * $obat->pcs);
                 $obat->total_pcs = $stok_update;
                 $obat->save();
+                DB::commit();
                 return redirect()->back()->with('message', 'Stok Obat berhasil dikurangi.');
             }
+            
         } catch (\Throwable $e) {
+            DB::rollback();
+            dd($e->getMessage());
             return redirect()->back()->with('message', 'Data Obat Gagal Di Update.');
         }
     }
@@ -176,7 +198,6 @@ class ObatController extends Controller
             foreach ($xlsx->rows() as $key => $item) {
                 // Tanpa Header
                 if ($key > 0) {
-                    // $item[0],
                     $harga = $item[5] == 0 ?  $item[3] :  $item[3]/$item[6];
                     $total_pcs = $item[5] == 0 ? $item[5] : $item[6]*$item[7];
                     // Add To Database
@@ -195,7 +216,6 @@ class ObatController extends Controller
                     $obat->save();
                     
                 }
-                # code...
             }
             return redirect()->back()->with(['message'=>'Data Obat berhasil disimpan.']);
         } else {

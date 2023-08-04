@@ -15,6 +15,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use App\Models\master\PasienDewasa;
 use App\Models\SuratKeteranganSakit;
+
 use App\Models\SuratRujukan;
 
 use function GuzzleHttp\Promise\all;
@@ -43,16 +44,6 @@ class KlinikController extends Controller
      */
     public function create()
     {
-        //
-        // if(substr($id,0,2)=='OD'){
-        //     $pasien = DB::table('pasien_dewasa')->where('no_registrasi',$id)->get();
-        // }
-        // else {
-        //     $pasien = DB::table('pasien_bayi')->where('no_registrasi',$id)->get();
-        //     $pasien[0]->agama = '-';
-        // }
-        // $pasien = json_decode(json_encode($pasien), true);
-        // return view('layanan\klinikDetail', compact('pasien'));
         $pasien = array();
         $pasien[0]['id'] = "1"; 
         $pasien[0]['no_reg'] = "AB00001"; 
@@ -258,7 +249,6 @@ class KlinikController extends Controller
     {
         
         $noreg = PasienDewasa::generateNoRegister();
-
         $nama = $request->namanya;
         $tanggal_lahir = $request->tlnya;
         $agama = $request->agamanya;
@@ -430,7 +420,6 @@ class KlinikController extends Controller
             $pasien = DB::table('pasien_dewasa')->where('no_regis',$id)->get();
         }
         else {
-            # code...
             $pasien = DB::table('pasien_bayi')->where('no_regis_pasien_dewasa',$id)->get();
             $pasien[0]->pekerjaan = 'Belum Bekerja';
         }
@@ -461,7 +450,7 @@ class KlinikController extends Controller
         $dompdf->getCanvas();
         $dompdf->loadHtml(View::make('layanan.klinik.surat_ket_sakit', compact('data') )->render());
         $dompdf->render();
-        $title = 'sks';
+        $title = 'surat_keterangan_sakit_pasien';
         return $dompdf->stream($title, ['Attachment' => true]);
     }
 
@@ -505,7 +494,7 @@ class KlinikController extends Controller
         $dompdf->getCanvas();
         $dompdf->loadHtml(View::make('layanan.klinik.surat_rujukan', compact('data') )->render());
         $dompdf->render();
-        $title = 'skr';
+        $title = 'surat_keterangan_rujukan_pasien';
         return $dompdf->stream($title, ['Attachment' => true]);
     }
 

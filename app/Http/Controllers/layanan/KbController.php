@@ -211,7 +211,6 @@ class KbController extends Controller
             dd($e->getMessage());
             return redirect('/layanan-kb/'.$no_regis)->with(['danger_message'=>'History KB gagal disimpan.']);    
         }
-
         
     }
 
@@ -223,13 +222,7 @@ class KbController extends Controller
      */
     public function show($id)
     {
-        //
-        // $layanankb = DB::select('SELECT * FROM (SELECT lb.id id_kartu, lb.id id_kb, lb.no_kartu, lb.status_peserta, lb.tgl_status_peserta, CONCAT(lb.jumlah_anak_laki, " Anak") jumlah_anak_laki, CONCAT(lb.jumlah_anak_perempuan, " Anak") jumlah_anak_perempuan, lb.ku, lb.haid_terakhir, CONCAT(lb.tensi_atas, "/", lb.tensi_bawah) tensi, lb.bb bb_kb, lb.sakit_kuning, lb.perd_per_vag, lb.tumor_payudara, IF(lb.fluoralbus = "seperti_susu", "seperti susu", lb.fluoralbus) fluoralbus, lb.tanda_radang, lb.tumor, lb.posisi_rahim, lb.genetalia_luar_dalam, lb.id_jenis_layanan jenis_layanan_kb, lb.tgl_dilayani, lb.tgl_datang_kembali, lb.tgl_lepas, l.nama nama_layanan, lb.no_registrasi_pasien, l.tarif_layanan, format(l.tarif_layanan,"id-ID") str_tarif_layanan FROM layanan_kb lb LEFT JOIN layanan l ON lb.id_jenis_layanan = l.id) ly LEFT JOIN pasien_dewasa p ON ly.no_registrasi_pasien = p.no_registrasi WHERE p.status_hapus <> 1 AND p.no_registrasi = "'.$id.'"');
-        // $layanankbArr = json_decode(json_encode($layanankb), true);
         $layanankbArr = Kb::where('no_regis_pasien_dewasa',$id)->get();
-        // dd()
-
-        // $history_kb = DB::select('SELECT h.*, l.nama FROM history_kb h LEFT JOIN layanan l ON h.id_jenis_layanan = l.id WHERE h.id_layanan_kb = '.$layanankbArr[0]['id_kb'].' order by h.tgl DESC');
         $history_kb = HistoryKB::where('id_layanan_kb',$layanankbArr[0]->id)->get();
         // dd($history_kb);
         $nama_layanan = "";
@@ -240,13 +233,8 @@ class KbController extends Controller
         else{
             $nama_layanan = $layanankbArr[0]['nama_layanan'];
         }
-
-        //get access all controller
-        // $controller = $this;
-        // dd($layanankbArr[0]->pasienDewasa);
         
         // get all informed consent
-        // $informed_consent = DB::select('SELECT l.url_gambar FROM lampiran l WHERE id_layanan = '.$layanankbArr[0]->jenis_layanan_kb.' AND no_registrasi_pasien = "'.$layanankbArr[0]->no_registrasi.'"');
         $informed_consent = lampiran::where('id_layanan',$layanankbArr[0]->jenis_layanan_kb)->get();
         return view('layanan.KB.history', compact(['layanankbArr', 'informed_consent', 'nama_layanan', 'history_kb']));
     }
@@ -371,16 +359,13 @@ class KbController extends Controller
 
     public function buatKartuStore(Request $request)
     {
-        // $pasienArr = PasienDewasa::where('no_regis',$id)->where('status_hapus',0)->get();
-        // $layanan = JenisLayanan::where('status_hapus',0)->where('pelayanan',0)->get();
-        // return view('layanan.Kb.buat_kartu', compact(['pasienArr', 'layanan']));
+
     }
 
     public function indexTambahHistoryKb($id)
     {
         $layanankbArr = Kb::where('id',$id)->get();
         // dd($layanankbArr);
-        // $layanankbArr[0]['tarif_layanan']
         $history_kb = HistoryKB::where('id_layanan_kb',$id)->get();
         $nama_layanan = "";
         if(count($history_kb) > 0){
@@ -418,9 +403,6 @@ class KbController extends Controller
         $tarif_layanan = $request->input("txtTarifLayanan");
         $tarif_total = $request->input("txtTarifTotal");
 
-        // $noreg = DB::select('SELECT no_registrasi FROM pasien_dewasa WHERE id = "'.$id_pasien.'"');
-        // print_r($list_id_obat." - qty : ".$qty_obat);
-        // die();
         DB::beginTransaction();
         try {
             $arrListIdObat = explode(",", $list_id_obat);
@@ -433,7 +415,6 @@ class KbController extends Controller
                 $id_layanan = $request->input("cboJenisKB");
             }
 
-            
             // INSERT KB HISTORY
             $new_history_kb = new HistoryKB();
             $new_history_kb->id_layanan_kb = $id_kartu;
@@ -449,7 +430,6 @@ class KbController extends Controller
             $new_history_kb->tindakan_efek_samping = $efeksamping;
             $new_history_kb->id_jenis_layanan = $id_layanan;
             $new_history_kb->save();
-         
 
             // INSERT DB TRANSAKSI
             $hargatotalobat = $totalObat + $grandtotalobattambah;
@@ -490,10 +470,6 @@ class KbController extends Controller
 
     public function storeImportObservasi(Request $request)
     {
-        // echo "<pre>";
-        // print_r($request->all());
-        // echo "</pre>";
-        // die();
         $no_regis = $request->input('no_regis');
         $id_jenis_layanan = $request->input('id_layanan');
 
@@ -519,11 +495,7 @@ class KbController extends Controller
             }
         } catch (\Exception $e) {
             DB::rollback();
-            // dd($e->getMessage());
-            // print_r($e->getMessage());
-            // die();
             return redirect('/layanan-kb/'.$no_regis)->with(['danger_message'=>'Lampiran gagal disimpan.']);
-                // something went wrong
         }
 
         return redirect('/layanan-kb/'.$no_regis)->with(['message'=>'Lampiran berhasil disimpan.']);

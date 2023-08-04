@@ -224,7 +224,7 @@ transform: translateY(5px);
                   $obat = DB::table('obat')->where('status_hapus',0)->where('total_pcs','>',0)->get();
                   ?>
                   @foreach($obat as $value)
-                  <option value="{{$value->id}}" data-value="{{$value->harga}}" stok-value="{{$value->total_pcs}}">{{$value->nama}}</option>
+                  <option value="{{$value->id}}" data-value="{{$value->harga}}" stok-value="{{$value->total_pcs}}">{{$value->nama}} EXP(( {{$value->tanggal_kadaluarsa}} ))</option>
                   @endforeach
                 </select>
               </label>
