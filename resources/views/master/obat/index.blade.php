@@ -12,8 +12,8 @@
 <!-- modal detail -->
 <div class="modal fade" id="modalDetail" role="dialog" 
 aria-labelledby="favoritesModalLabel">
-<div class="modal-dialog" role="document">
-  <div class="modal-content" style="border-radius: 17px;">
+<div class="modal-dialog" role="document" style="max-width: 600px;">
+  <div class="modal-content" style="border-radius: 20px;">
     <div class="modal-header" style="background-color: #e61919; border-radius:17px 17px 0px 0px;">
       <h4 style="color:white;">Detail Data Obat</h4>
       <button type="button" class="close" 
@@ -23,56 +23,6 @@ aria-labelledby="favoritesModalLabel">
     </div>
     <div class="modal-body">
       <div class="form-group">
-        <!-- <div class="col-md-12">
-            <div class="row">
-        <div class="col-md-6">
-          <div class="form-group row">
-            <label class="control-label col-sm-4" for="nama">Nama</label>
-            <label class="control-label col-sm-6" for="nama" style="font-weight: normal;">
-              : &nbsp <span> <p id="lblNamaDetail"></p></span>
-            </label>
-          </div>
-          <div class="form-group row">
-            <label class="control-label col-sm-4" for="nama">Kode</label>
-            <label class="control-label col-sm-6" for="nama" style="font-weight: normal;">
-              : &nbsp <span> <p id="lblKodeDetail"></p></span>
-            </label>
-          </div>
-          <div class="form-group row">
-            <label class="control-label col-sm-4" for="nama">Merk</label>
-            <label class="control-label col-sm-6" for="nama" style="font-weight: normal;">
-              : &nbsp <span> <p id="lblMerkDetail"></p></span>
-            </label>
-          </div>
-          <div class="form-group row">
-            <label class="control-label col-sm-4" for="nama">Harga</label>
-            <label class="control-label col-sm-6" for="nama" style="font-weight: normal;">
-              : &nbsp <span> <p id="lblHargaDetail"></p></span>
-            </label>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="form-group row">
-            <label class="control-label col-sm-4" for="nama">Catatan</label>
-            <label class="control-label col-sm-6" for="nama" style="font-weight: normal;">
-              : &nbsp <span> <p id="lblCatatanDetail"></p></span>
-            </label>
-          </div>
-          <div class="form-group row">
-            <label class="control-label col-sm-4" for="nama">Stok</label>
-            <label class="control-label col-sm-6" for="nama" style="font-weight: normal;">
-              : &nbsp <p id="lblStokDetail"></p></span>
-            </label>
-          </div>
-          <div class="form-group row">
-            <label class="control-label col-sm-4" for="nama">Tanggal Kadaluarsa</label>
-            <label class="control-label col-sm-6" for="nama" style="font-weight: normal;">
-              : &nbsp <span> <p id="lblTglDetail"></p></span>
-            </label>
-          </div>
-        </div>
-      </div>
-    </div> -->
 
     <label>Nama:</label>
     <p id="lblNamaDetail"></p>
@@ -89,13 +39,21 @@ aria-labelledby="favoritesModalLabel">
     <label>Tanggal Kadaluarsa:</label>
     <p id="lblTglDetail"></p> 
     <label>Kartu Stok:</label>
-    <p>
-    @foreach($kartustok as $key => $value) 
-    <tr>
-      <td>{{$value->status}}</td>
-    </tr>
-    </p>
-    @endforeach
+    <table id="example1" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="example1_info">
+      <thead>
+        <tr role="row" style="text-align: center;">
+          <td style="text-align: center;">Status</td>
+          <td style="text-align: center;">Jumlah</td>
+          <td style="text-align: center;">Satuan</td>
+          <td style="text-align: center;">Keterangan</td>
+          <td style="text-align: center;">Tanggal</td>
+        </tr>
+      </thead>
+      <tbody id="lblTableKartuDetail">
+
+      </tbody>
+    
+    </table>
   </div>
   <div class="form-group">
     <input type="hidden" name="_token" value="{!!csrf_token()!!}">
@@ -312,10 +270,14 @@ aria-labelledby="favoritesModalLabel">
                         <select class="form-control" id="txtSatuanJmlKurang" name="txtSatuanJmlKurang"></select>
                         <label style="display: none; font-weight: normal; font-size: 10pt" id="satuanKurang"></label>
                       </label>
-
+                    </div>
+                    <div class="form-group  row">
+                      <label class="control-label col-sm-3" for="nama">Catatan:</label>
+                      <textarea class="form-control" rows="3" id="txtCttnKurang" name="txtCttnKurang" placeholder="Enter ..." autocomplete="off"></textarea>
+                      </label>
                     </div>
                     <div class="form-group">
-                      <button type="submit" name="simpan" id="btnsubmitkurang" class="btn btn-danger">Simpan</button>
+                      <button type="submit" name="simpan" class="btn btn-danger">Simpan</button>
                     </div>
                   </form>
                   <!-- /.tab-pane -->
@@ -560,7 +522,7 @@ aria-labelledby="favoritesModalLabel">
                       <td>
                         <div class="form-group">
                           <div>
-                            <button data-toggle="modal" data-target="#modalDetail" id="<?php echo 'edit'.$key; ?>" onclick="opendetailmodal(<?php echo "'".$value["kode_obat"]."'" ?>,<?php echo "'".$value["nama"]."'" ?>,<?php echo "'".$value["merk"]."'" ?>,<?php echo "'".number_format($value["harga"])."'" ?>,<?php echo "'".$value["catatan"]."'" ?>,<?php echo "'".$value["total_pcs"]."'" ?>,<?php echo "'".$value["id_satuan"]."'" ?>,<?php echo "'".$value["tanggal_kadaluarsa"]."'" ?>);" class="btn btn-info"  style="width:40px"><i class="fa fa-info"></i></button>
+                            <button data-toggle="modal" data-target="#modalDetail" id="<?php echo 'edit'.$key; ?>" onclick="opendetailmodal(<?php echo "'".$value["kode_obat"]."'" ?>,<?php echo "'".$value["nama"]."'" ?>,<?php echo "'".$value["merk"]."'" ?>,<?php echo "'".number_format($value["harga"])."'" ?>,<?php echo "'".$value["catatan"]."'" ?>,<?php echo "'".$value["total_pcs"]."'" ?>,<?php echo "'".$value["id_satuan"]."'" ?>,<?php echo "'".$value["tanggal_kadaluarsa"]."'" ?>,'{{ $value->kartuStokObat }}');" class="btn btn-info"  style="width:40px"><i class="fa fa-info"></i></button>
 
                             <button class="btn btn-primary" data-toggle="modal" data-target="#modalEdit" title="Edit" id="<?php echo 'edit'.$key; ?>" onclick="openeditmodal(<?php echo "'".$value['id']."'" ?>,<?php echo "'".$value["nama"]."'" ?>,<?php echo "'".$value["kode_obat"]."'" ?>,<?php echo "'".$value["merk"]."'" ?>,<?php echo "'".number_format($value["harga"]*$value["pcs"])."'" ?>,<?php echo "'".$value["total_pcs"]."'" ?>,<?php echo "'".$value["catatan"]."'" ?>,<?php echo "'".$value["id_satuan"]."'" ?>,<?php echo "'".$value["pcs"]."'" ?>,<?php echo "'".date('d-m-Y', strtotime($value['tanggal_kadaluarsa']))."'" ?>);"><i class="fa fa-edit"></i></button>
 
@@ -596,7 +558,7 @@ aria-labelledby="favoritesModalLabel">
   var total_pcsnya;
   var pcsnya;
 
-  function opendetailmodal(KODE, NAMA, MERK, HARGA, CATATAN, STOK, SATUAN, TGLKADALUARSA)
+  function opendetailmodal(KODE, NAMA, MERK, HARGA, CATATAN, STOK, SATUAN, TGLKADALUARSA,kartu)
   {
     document.getElementById('lblNamaDetail').innerHTML = NAMA;
     document.getElementById('lblKodeDetail').innerHTML = KODE;
@@ -605,6 +567,24 @@ aria-labelledby="favoritesModalLabel">
     document.getElementById('lblCatatanDetail').innerHTML = CATATAN;
     document.getElementById('lblStokDetail').innerHTML = STOK+" (PCS/BUTIR)";
     document.getElementById('lblTglDetail').innerHTML = TGLKADALUARSA;
+    var kartu = JSON.parse(kartu)
+    $('#lblTableKartuDetail').html("");
+    if(kartu.length > 0){
+      kartu.forEach(element => {
+        var html = `
+        <tr>
+          <td>${element.status}</td>
+          <td>${element.jumlah}</td>
+          <td>${element.satuan == 0 ? 'PCS/BUTIR' : 'PACK/STRIP'}</td>
+          <td>${element.keterangan}</td>
+          <td>${element.tanggal}</td>
+        </tr>
+        `
+        $('#lblTableKartuDetail').append(html)
+
+      });
+    }
+    // console.log(kartu.length);
   }
 
 

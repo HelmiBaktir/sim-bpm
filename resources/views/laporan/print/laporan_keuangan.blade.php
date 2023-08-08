@@ -22,6 +22,15 @@
               No
             </th>
             <th style="width: 40%; text-align: center;">
+              Pasien ID
+            </th>
+            <th style="width: 40%; text-align: center;">
+              Nama Pasien
+            </th>
+            <th style="width: 40%; text-align: center;">
+              Tanggal Periksa
+            </th>
+            <th style="width: 40%; text-align: center;">
               Jenis Layanan
             </th>
             <th style="width: 25%; text-align: center;">
@@ -36,41 +45,55 @@
           </tr>
         </thead>
         <tbody>
-          <tbody>
-            <?php foreach($laporan as $key => $value) { ?>
-              <tr>
-                <td style="text-align: center;"><?php echo ($key+1); ?></td>
-                <?php
-                  $jenis = '';
-                  if($value->jenis_layanan == 'KLINIK')
+        <tbody>
+          <?php foreach($laporan as $key => $transaksi) { ?>
+          <tr>
+              <td style="text-align: center;"><?php echo ($key+1); ?></td>
+              <?php foreach ($transaksi->detailTransaksi as $detailKey => $detail) { ?>
+                  <td style="text-align: left;"><?php echo ($detail->pasienable_id); ?></td>
+                  <td style="text-align: left;">
+                      <?php if ($detail->pasienable) {
+                          if ($detail->pasienable_type === 'App\Models\master\PasienDewasa') {
+                              echo($detail->pasienable->nama);
+                          } elseif ($detail->pasienable_type === 'App\Models\master\PasienBayi') {
+                              echo($detail->pasienable->nama);
+                          } else {
+                              echo("Tidak terdaftar dalam pasien");
+                          }
+                      } ?>
+                  </td>
+              <?php } ?>
+              <?php
+              $jenis = '';
+              if($transaksi->jenis_layanan == 'KLINIK')
                     $jenis = 'KLINIK';
-                  if($value->jenis_layanan == '0')
+                  if($transaksi->jenis_layanan == '0')
                     $jenis = 'KB';
-                  if($value->jenis_layanan == '1')
+                  if($transaksi->jenis_layanan == '1')
                     $jenis = 'IMUNISASI PAKETAN';
-                  if($value->jenis_layanan == '2')
+                  if($transaksi->jenis_layanan == '2')
                     $jenis = 'IMUNISASI SATUAN';
-                  if($value->jenis_layanan == '3')
+                  if($transaksi->jenis_layanan == '3')
                     $jenis = 'IBU HAMIL';
-                  if($value->jenis_layanan == '4')
+                  if($transaksi->jenis_layanan == '4')
                     $jenis = 'KUNJUNGAN ULANG IBU HAMIL';
-                  if($value->jenis_layanan == '5')
+                  if($transaksi->jenis_layanan == '5')
                     $jenis = 'PERSALINAN';
-                  if($value->jenis_layanan == '6')
+                  if($transaksi->jenis_layanan == '6')
                     $jenis = 'NIFAS';
-                ?>
-                <td>
-                {{$jenis}}
-                </td>
-                <td style="text-align: right;"><?php echo number_format($value->total_harga,0,",","."); ?></td>
-                <td style="text-align: right;"><?php echo number_format($value->harga_obat,0,",","."); ?></td>
-                <td style="text-align: right;"><?php echo number_format($value->harga_layanan,0,",","."); ?></td>
-              </tr>
-            <?php } ?>
-          </tbody>
+              ?>
+              <td style="text-align: center;"><?php echo date("d/m/Y", strtotime($transaksi->created_at)); ?></td>
+              <td>{{$jenis}}</td>
+              <td style="text-align: right;"><?php echo number_format($transaksi->total_harga, 0, ",", "."); ?></td>
+              <td style="text-align: right;"><?php echo number_format($transaksi->harga_obat, 0, ",", "."); ?></td>
+              <td style="text-align: right;"><?php echo number_format($transaksi->harga_layanan, 0, ",", "."); ?></td>
+          </tr>
+          <?php } ?>
+      </tbody>
+
           <tfoot>
               <tr>
-                <td style="text-align: right;" colspan="2"><label>Total :</label></td>
+                <td style="text-align: right;" colspan="5"><label>Total :</label></td>
                 <td style="text-align: right;">{{"Rp. ".number_format($total_totharga,0,",",".").",-"}}</td>
                 <td style="text-align: right;">{{"Rp. ".number_format($total_obat,0,",",".").",-"}}</td>
                 <td style="text-align: right;">{{"Rp. ".number_format($total_keuntungan,0,",",".").",-"}}</td>

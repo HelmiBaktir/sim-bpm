@@ -27,6 +27,7 @@ use App\Models\HistoryLayananIbuHamil;
 use App\Models\HistoryLembarObservasi;
 use App\Models\layanan\RiwayatKehamilan;
 use App\Models\master\SuamiPasienDewasa;
+use App\Models\DetailTransaksi;
 
 class IbuHamilController extends Controller
 {
@@ -409,6 +410,13 @@ class IbuHamilController extends Controller
             $new_transaksi->total_harga = $harga_total;
             $new_transaksi->tanggal = date("Y-m-d");
             $new_transaksi->save();
+
+            //detail transaksi
+            $new_detail_transaksi = new DetailTransaksi();
+            $new_detail_transaksi-> transaksi_id = $new_transaksi->id;
+            $new_detail_transaksi->pasienable_id = $id_new_ibu_hamil;
+            $new_detail_transaksi->pasienable_type = 'App\Models\master\PasienDewasa';
+            $new_detail_transaksi->save();
 
             // INSERT OBAT 
             $new_history_layanan_ibu_hamil = new HistoryLayananIbuHamil();
@@ -1028,6 +1036,13 @@ class IbuHamilController extends Controller
             $new_transaksi->users_id = Auth::user()->id;
             $new_transaksi->save();
 
+            //detail transaksi
+            $new_detail_transaksi = new DetailTransaksi();
+            $new_detail_transaksi-> transaksi_id = $new_transaksi->id;
+            $new_detail_transaksi->pasienable_id = $id_new_ibu_hamil;
+            $new_detail_transaksi->pasienable_type = 'App\Models\master\PasienDewasa';
+            $new_detail_transaksi->save();
+
             // INSERT LAYANAN IBU Hamil 
             $new_history_layanan_ibu_hamil = new HistoryLayananIbuHamil();
             $new_history_layanan_ibu_hamil->id_layanan_ibu_hamil = $id_new_ibu_hamil;
@@ -1168,6 +1183,13 @@ class IbuHamilController extends Controller
             $new_transaksi->tanggal =  date("Y-m-d");
             $new_transaksi->users_id = Auth::user()->id;
             $new_transaksi->save();
+
+            //detail transaksi
+            $new_detail_transaksi = new DetailTransaksi();
+            $new_detail_transaksi-> transaksi_id = $new_transaksi->id;
+            $new_detail_transaksi->pasienable_id = $id_new_history_layanan_ibu_hamil;
+            $new_detail_transaksi->pasienable_type = 'App\Models\master\PasienDewasa';
+            $new_detail_transaksi->save();
 
             DB::commit();
             return redirect('/layananIbuHamilDetail/detailKartu/' . $request->id_layanan)->with(['message' => 'Data history kehamilan berhasil disimpan.']);
@@ -1559,6 +1581,13 @@ class IbuHamilController extends Controller
             $new_transaksi->total_harga = $total_harga;
             $new_transaksi->tanggal = date("Y-m-d H:i:s");
             $new_transaksi->save();
+
+            //detail transaksi
+            $new_detail_transaksi = new DetailTransaksi();
+            $new_detail_transaksi-> transaksi_id = $new_transaksi->id;
+            $new_detail_transaksi->pasienable_id = $id;
+            $new_detail_transaksi->pasienable_type = 'App\Models\master\PasienDewasa';
+            $new_detail_transaksi->save();
             
             DB::commit();
             return redirect('/layananIbuHamilDetail/detailKartu/' . $request->id_layanan_ibu_hamil)->with(['message' => 'Data history kehamilan berhasil disimpan.']);
@@ -1674,6 +1703,12 @@ class IbuHamilController extends Controller
             $new_transaksi->total_harga = $total_harga;
             $new_transaksi->tanggal = date("Y-m-d H:i:s");
             
+            //detail transaksi
+            $new_detail_transaksi = new DetailTransaksi();
+            $new_detail_transaksi-> transaksi_id = $new_transaksi->id;
+            $new_detail_transaksi->pasienable_id = $id_layanan_ibu_hamil;
+            $new_detail_transaksi->pasienable_type = 'App\Models\master\PasienDewasa';
+            $new_detail_transaksi->save();
 
             DB::commit();
             return redirect('/layananIbuHamilDetail/detailKartu/' . $id_layanan_ibu_hamil)->with(['message' => 'Data history kehamilan berhasil disimpan.']);

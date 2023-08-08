@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Transaksi extends Model
+class DetailTransaksi extends Model
 {
     use HasFactory;
-    protected $table = 'transaksi';
+    protected $table = 'detail_transaksi';
 
-    public function detailTransaksi()
+
+    public function pasienable()
     {
-        return $this->hasMany(DetailTransaksi::class);
+        return $this->morphTo();
     }
-
 }

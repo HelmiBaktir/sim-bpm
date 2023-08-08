@@ -3,6 +3,8 @@
 namespace App\Models\master;
 
 use App\Models\HistoryIbuHamilObat;
+use App\Models\master\kartuStokObat;
+
 use App\Models\master\JenisLayanan;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -26,6 +28,10 @@ class Obat extends Model
 
     public function nifas(){
         return $this->belongsToMany(JenisLayanan::class,'nifas_obat','id_obat','id_layanan')->withPivot('qty','harga_obat','total_harga_obat');
+    }
+
+    public function kartuStokObat(){
+        return $this->hasMany(kartuStokObat::class,'obat_id','id');
     }
 
     // public function ibuHamil(){

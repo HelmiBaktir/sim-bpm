@@ -11,7 +11,7 @@ class PengingatImunisasiController extends Controller
     //
     public function indexHariIni()
     {
-        $bayi = DB::select("SELECT pb.id as idbayi,ijl.tanggal as tanggal, l.nama as jenisImunisasi, pb.id, pb.nama, pb.nama_ayah, pb.nama_ibu, pb.telp,l.id as idLayanan FROM imunisasi_jenis_layanan as ijl, layanan_imunisasi as li, pasien_bayi as pb, layanan as l WHERE ijl.id_layanan_imunisasi = li.id AND li.id_pasien_bayi = pb.id AND ijl.id_jenis_layanan = l.id AND ijl.status_imunisasi = 0 AND pb.status_hapus=0 AND DATEDIFF(ijl.tanggal,'".date("Y-m-d")."')=0");
+        $bayi = DB::select("SELECT pb.id as idbayi,ijl.tanggal as tanggal, l.nama as jenisImunisasi, pb.id, pb.nama, pb.nama_ayah, pb.nama_ibu, pb.telp,l.id as idLayanan FROM imunisasi_jenis_layanan as ijl, layanan_imunisasi as li, pasien_bayi as pb, layanan as l WHERE ijl.id_layanan_imunisasi = li.id  AND ijl.id_jenis_layanan = l.id AND ijl.status_imunisasi = 0 AND pb.status_hapus=0 AND DATEDIFF(ijl.tanggal,'".date("Y-m-d")."')=0");
         return view('pengingat.imunisasi.hariIni', compact('bayi'));
     }
 

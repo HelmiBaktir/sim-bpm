@@ -35,5 +35,9 @@ class PasienDewasa extends Model
         return $this->hasMany(Kb::class, 'no_regis_pasien_dewasa','no_regis');
         
     }
+    public function detailTransaksi()
+    {
+        return $this->morphMany(DetailTransaksi::class, 'pasienable');
+    }
 
 }

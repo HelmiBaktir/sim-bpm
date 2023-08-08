@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\master\JenisLayanan;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ImunisasiJenisLayanan;
+use App\Models\DetailTransaksi;
 
 class ImunisasiController extends Controller
 {
@@ -276,6 +277,13 @@ class ImunisasiController extends Controller
             $new_transaksi->tanggal = date("Y-m-d H:i:s");
             $new_transaksi->users_id = Auth::user()->id;
             $new_transaksi->save();
+
+            //detail transaksi
+            $new_detail_transaksi = new DetailTransaksi();
+            $new_detail_transaksi-> transaksi_id = $new_transaksi->id;
+            $new_detail_transaksi->pasienable_id = $request->noregKonf;
+            $new_detail_transaksi->pasienable_type = 'App\Models\master\PasienBayi';
+            $new_detail_transaksi->save();
             
             $id_pasien = PasienBayi::where('id',$request->noregKonf)->get();
             DB::commit();

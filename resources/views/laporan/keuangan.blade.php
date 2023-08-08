@@ -31,6 +31,7 @@
           <div class="row">
             <div class="col-md-6"> 
               <FORM method="post" action="<?php echo URL::to('/laporan_keuangan/print')?>">
+              @csrf
               <div class="form-group">
                 <label class="col-sm-2" style="font-weight: normal;" >Tanggal </label>
                 <label class="col-sm-6">
@@ -72,6 +73,12 @@
                       <th class="sorting_asc" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Rendering engine: activate to sort column descending" style="text-align: center;">
                         No
                       </th>
+                      <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="Browser: activate to sort column ascending" style="width: 30%; text-align: center;">
+                        Pasien ID
+                      </th>
+                      <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="Browser: activate to sort column ascending" style="width: 30%; text-align: center;">
+                        Nama Pasien
+                      </th>
                       <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" aria-label="Browser: activate to sort column ascending" style="width: 10%; text-align: center;">
                         Jenis Layanan
                       </th>
@@ -87,39 +94,54 @@
                     </tr>
                   </thead>
                   <tbody>
-                    @foreach($laporan as $key => $value)
+                    @foreach($laporan as $key => $transaksi)
                       <tr>
                         <td style="text-align: center;">{{($key+1)}}</td>
+                        @foreach ($transaksi->detailTransaksi as $detailKey => $detail)
+                        <!-- Data pasienable_id dan pasienable_type -->
+                        <td style="text-align: left;">{{ $detail->pasienable_id }}</td>
+
+                        <!-- Data lain dari pasienable -->
+                        @if ($detail->pasienable)
+                            @if ($detail->pasienable_type === 'App\Models\master\PasienDewasa')
+                            <td style="text-align: left;">{{ $detail->pasienable->nama }}</td><!-- Contoh, sesuaikan dengan atribut yang ada di model -->
+                            @elseif ($detail->pasienable_type === 'App\Models\master\PasienBayi')
+                            <td style="text-align: left;">{{ $detail->pasienable->nama }}</td> <!-- Contoh, sesuaikan dengan atribut yang ada di model -->
+                            @endif
+                        @endif
+                        @endforeach
                         <?php
                           $jenis = '';
-                          if($value->jenis_layanan == 'KLINIK')
+                          if($transaksi->jenis_layanan == 'KLINIK')
                             $jenis = 'KLINIK';
-                          if($value->jenis_layanan == '0')
+                          if($transaksi->jenis_layanan == '0')
                             $jenis = 'KB';
-                          if($value->jenis_layanan == '1')
+                          if($transaksi->jenis_layanan == '1')
                             $jenis = 'IMUNISASI PAKETAN';
-                          if($value->jenis_layanan == '2')
+                          if($transaksi->jenis_layanan == '2')
                             $jenis = 'IMUNISASI SATUAN';
-                          if($value->jenis_layanan == '3')
+                          if($transaksi->jenis_layanan == '3')
                             $jenis = 'IBU HAMIL';
-                          if($value->jenis_layanan == '4')
+                          if($transaksi->jenis_layanan == '4')
                             $jenis = 'KUNJUNGAN ULANG IBU HAMIL';
-                          if($value->jenis_layanan == '5')
+                          if($transaksi->jenis_layanan == '5')
                             $jenis = 'PERSALINAN';
-                          if($value->jenis_layanan == '6')
+                          if($transaksi->jenis_layanan == '6')
                             $jenis = 'KUNJUNGAN ULANG NIFAS';
                         ?>
                         <td>
                         {{$jenis}}
                         </td>
-                        <td style="text-align: right;">{{number_format($value->total_harga,0,",",".")}}</td>
-                        <td style="text-align: right;">{{number_format($value->harga_obat,0,",",".")}}</td>
-                        <td style="text-align: right;">{{number_format($value->harga_layanan,0,",",".")}}</td>
+                        <td style="text-align: right;">{{number_format($transaksi->total_harga,0,",",".")}}</td>
+                        <td style="text-align: right;">{{number_format($transaksi->harga_obat,0,",",".")}}</td>
+                        <td style="text-align: right;">{{number_format($transaksi->harga_layanan,0,",",".")}}</td>
                       </tr>
                     @endforeach
                   </tbody>
                   <tfoot>
                       <tr>
+                        <td></td>
+                        <td></td>
                         <td style="text-align: right;" colspan="2"><label>Total :</label></td>
                         <td style="text-align: right;">{{"Rp. ".number_format($total_totharga,0,",",".").",-"}}</td>
                         <td style="text-align: right;">{{"Rp. ".number_format($total_obat,0,",",".").",-"}}</td>

@@ -31,60 +31,162 @@ class LaporanController extends Controller
 
     public function indexLaporanKeuanganFilter(Request $request)
     {
-        $tanggal = explode(" - ",$request->filter_date);
-        $tanggal_bawah_explode = explode("/",$tanggal[0]);
-        $tanggal_bawah = $tanggal_bawah_explode[2]."-".$tanggal_bawah_explode[0]."-".$tanggal_bawah_explode[1];
-        $tanggal_atas_explode = explode("/",$tanggal[1]);
-        $tanggal_atas = $tanggal_atas_explode[2]."-".$tanggal_atas_explode[0]."-".$tanggal_atas_explode[1];
+        // $tanggal = explode(" - ",$request->filter_date);
+        // $tanggal_bawah_explode = explode("/",$tanggal[0]);
+        // $tanggal_bawah = $tanggal_bawah_explode[2]."-".$tanggal_bawah_explode[0]."-".$tanggal_bawah_explode[1];
+        // $tanggal_atas_explode = explode("/",$tanggal[1]);
+        // $tanggal_atas = $tanggal_atas_explode[2]."-".$tanggal_atas_explode[0]."-".$tanggal_atas_explode[1];
+        $tanggal = explode(" - ", $request->filter_date);
+        $tanggal_bawah_explode = explode("/", $tanggal[0]);
+        $tanggal_bawah = $tanggal_bawah_explode[2] . "-" . $tanggal_bawah_explode[0] . "-" . $tanggal_bawah_explode[1];
+        $tanggal_atas_explode = explode("/", $tanggal[1]);
+        $tanggal_atas = $tanggal_atas_explode[2] . "-" . $tanggal_atas_explode[0] . "-" . $tanggal_atas_explode[1];
         
-        $laporan = DB::table("transaksi")->where('tanggal','>=', $tanggal_bawah." 00:00:00")->where('tanggal','<=', $tanggal_atas." 23:59:59")->get();
-
+        $laporan = Transaksi::with('detailTransaksi')
+        ->where('tanggal', '>=', $tanggal_bawah . " 00:00:00")
+        ->where('tanggal', '<=', $tanggal_atas . " 23:59:59")
+        ->get();
+        
         $total_keuntungan = 0;
         $total_obat = 0;
         $total_totharga = 0;
-        foreach ($laporan as $key => $value) {
-            $total_keuntungan += $value->harga_layanan;
-            $total_obat += $value->harga_obat;
-            $total_totharga += $value->total_harga;
+        foreach ($laporan as $transaksi) {
+            // Mengakses data "DetailTransaksi" untuk transaksi saat ini
+            $detailTransaksi = $transaksi->detailTransaksi;
+    
+            // Sekarang Anda dapat mengakses detail dari setiap "DetailTransaksi"
+            foreach ($detailTransaksi as $detail) {
+                // Lakukan sesuatu dengan $detail (misalnya, menghitung total, menampilkan, dll.)
+                $total_keuntungan += $detail->harga_layanan;
+                $total_obat += $detail->harga_obat;
+                $total_totharga += $detail->total_harga;
+            }
         }
-
+    
         return view('laporan.keuangan', compact(["laporan", "total_keuntungan", "total_obat", "total_totharga"]));
         // return $tanggal;
     }
 
     public function printLaporanKeuangan(Request $request)
     {
-        $tanggal = explode(" - ",$request->tanggal);
-        $tanggal_bawah_explode = explode("/",$tanggal[0]);
-        $tanggal_bawah = $tanggal_bawah_explode[2]."-".$tanggal_bawah_explode[0]."-".$tanggal_bawah_explode[1];
-        $tanggal_atas_explode = explode("/",$tanggal[1]);
-        $tanggal_atas = $tanggal_atas_explode[2]."-".$tanggal_atas_explode[0]."-".$tanggal_atas_explode[1];
-        
-        $laporan = DB::table("transaksi")->where('tanggal','>=', $tanggal_bawah." 00:00:00")->where('tanggal','<=', $tanggal_atas." 23:59:59")->get();
-
+        $tanggal = explode(" - ", $request->tanggal);
+        $tanggal_bawah_explode = explode("/", $tanggal[0]);
+        $tanggal_bawah = $tanggal_bawah_explode[2] . "-" . $tanggal_bawah_explode[0] . "-" . $tanggal_bawah_explode[1];
+        $tanggal_atas_explode = explode("/", $tanggal[1]);
+        $tanggal_atas = $tanggal_atas_explode[2] . "-" . $tanggal_atas_explode[0] . "-" . $tanggal_atas_explode[1];
+    
+        $laporan = Transaksi::with('detailTransaksi')
+        ->where('tanggal', '>=', $tanggal_bawah . " 00:00:00")
+        ->where('tanggal', '<=', $tanggal_atas . " 23:59:59")
+        ->get();
+    
         $total_keuntungan = 0;
         $total_obat = 0;
         $total_totharga = 0;
-        foreach ($laporan as $key => $value) {
-            $total_keuntungan += $value->harga_layanan;
-            $total_obat += $value->harga_obat;
-            $total_totharga += $value->total_harga;
+    
+        foreach ($laporan as $transaksi) {
+            // Mengakses data "DetailTransaksi" untuk transaksi saat ini
+            $detailTransaksi = $transaksi->detailTransaksi;
+    
+            // Sekarang Anda dapat mengakses detail dari setiap "DetailTransaksi"
+            foreach ($detailTransaksi as $detail) {
+                // Lakukan sesuatu dengan $detail (misalnya, menghitung total, menampilkan, dll.)
+                $total_keuntungan += $detail->harga_layanan;
+                $total_obat += $detail->harga_obat;
+                $total_totharga += $detail->total_harga;
+            }
         }
-
-        $judul = 'Laporan Keuntungan BPM. Lita Anggraeni Amd. Keb'."<BR>".'Periode '.date("d-m-Y", strtotime($tanggal_bawah)).' - '.date("d-m-Y", strtotime($tanggal_atas));
-
+    
+        $judul = 'Laporan Keuntungan BPM. Lita Anggraeni Amd. Keb' . "<BR>" . 'Periode ' . date("d-m-Y", strtotime($tanggal_bawah)) . ' - ' . date("d-m-Y", strtotime($tanggal_atas));
+    
         $dompdf = new Dompdf();
-        $dompdf->loadHtml(View::make('laporan.print.laporan_keuangan',[
-            'laporan' => $laporan, 
+        $dompdf->loadHtml(View::make('laporan.print.laporan_keuangan', [
+            'laporan' => $laporan,
             'judul' => $judul,
-            'total_keuntungan' => $total_keuntungan, 
+            'total_keuntungan' => $total_keuntungan,
             'total_obat' => $total_obat,
             'total_totharga' => $total_totharga
-        ] )->render());
+        ])->render());
         $dompdf->render();
         $title = $judul;
         return $dompdf->stream($title, ['Attachment' => true]);
     }
+
+    // public function printLaporanKeuangan(Request $request)
+    // {
+    //     $tanggal = explode(" - ", $request->tanggal);
+    //     $tanggal_bawah_explode = explode("/", $tanggal[0]);
+    //     $tanggal_bawah = $tanggal_bawah_explode[2] . "-" . $tanggal_bawah_explode[0] . "-" . $tanggal_bawah_explode[1];
+    //     $tanggal_atas_explode = explode("/", $tanggal[1]);
+    //     $tanggal_atas = $tanggal_atas_explode[2] . "-" . $tanggal_atas_explode[0] . "-" . $tanggal_atas_explode[1];
+
+    //     $laporan = Transaksi::where('tanggal', '>=', $tanggal_bawah . " 00:00:00")
+    //         ->where('tanggal', '<=', $tanggal_atas . " 23:59:59")
+    //         ->with('detailTransaksi')->get();
+
+    //     $judul = 'Laporan Keuntungan BPM. Lita Anggraeni Amd. Keb' . "<BR>" . 'Periode ' . date("d-m-Y", strtotime($tanggal_bawah)) . ' - ' . date("d-m-Y", strtotime($tanggal_atas));
+
+    //     $pdf = PDF::loadView('laporan.print.laporan_keuangan', [
+    //         'laporan' => $laporan,
+    //         'judul' => $judul
+    //     ]);
+
+    //     return $pdf->stream('laporan_keuangan.pdf', ['Attachment' => true]);
+    // }
+
+    // public function printLaporanKeuangan(Request $request)
+    // {
+    //     $tanggal = explode(" - ",$request->tanggal);
+    //     $tanggal_bawah_explode = explode("/",$tanggal[0]);
+    //     $tanggal_bawah = $tanggal_bawah_explode[2]."-".$tanggal_bawah_explode[0]."-".$tanggal_bawah_explode[1];
+    //     $tanggal_atas_explode = explode("/",$tanggal[1]);
+    //     $tanggal_atas = $tanggal_atas_explode[2]."-".$tanggal_atas_explode[0]."-".$tanggal_atas_explode[1];
+        
+    //     $laporan = DB::table("transaksi")->where('tanggal','>=', $tanggal_bawah." 00:00:00")->where('tanggal','<=', $tanggal_atas." 23:59:59")
+    //     ->with('detail_transaksi')->get();
+
+    //     $total_keuntungan = 0;
+    //     $total_obat = 0;
+    //     $total_totharga = 0;
+
+    //     foreach ($laporan as $transaksi) {
+    //         // Mengakses data "DetailTransaksi" untuk transaksi saat ini
+    //         $detailTransaksi = $transaksi->detailTransaksi;
+        
+    //         // Sekarang Anda dapat mengakses detail dari setiap "DetailTransaksi"
+    //         foreach ($detailTransaksi as $detail) {
+    //             // Lakukan sesuatu dengan $detail (misalnya, menghitung total, menampilkan, dll.)
+    //             $total_keuntungan += $value->harga_layanan;
+    //             $total_obat += $value->harga_obat;
+    //             $total_totharga += $value->total_harga;
+    //         }
+    //     }
+        
+
+    //     // foreach ($laporan as $transaksi){
+    //     //     $detailtransaksi = $transaksi->detailTransaksi;
+    //     //     foreach ($laporan as $key => $value) {
+    //     //         $total_keuntungan += $value->harga_layanan;
+    //     //         $total_obat += $value->harga_obat;
+    //     //         $total_totharga += $value->total_harga;
+    //     //     }
+    //     // }
+
+
+    //     $judul = 'Laporan Keuntungan BPM. Lita Anggraeni Amd. Keb'."<BR>".'Periode '.date("d-m-Y", strtotime($tanggal_bawah)).' - '.date("d-m-Y", strtotime($tanggal_atas));
+
+    //     $dompdf = new Dompdf();
+    //     $dompdf->loadHtml(View::make('laporan.print.laporan_keuangan',[
+    //         'laporan' => $laporan, 
+    //         'judul' => $judul,
+    //         'total_keuntungan' => $total_keuntungan, 
+    //         'total_obat' => $total_obat,
+    //         'total_totharga' => $total_totharga
+    //     ] )->render());
+    //     $dompdf->render();
+    //     $title = $judul;
+    //     return $dompdf->stream($title, ['Attachment' => true]);
+    // }
 
     // Ibu Hamil
     

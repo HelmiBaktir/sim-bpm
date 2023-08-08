@@ -51,4 +51,8 @@ class PasienBayi extends Model
         }
         
     }
+    public function detailTransaksi()
+    {
+        return $this->morphMany(DetailTransaksi::class, 'pasienable');
+    }
 }

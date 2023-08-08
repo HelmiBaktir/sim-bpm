@@ -21,8 +21,11 @@ class ObatController extends Controller
     public function index()
     {
         //
-        $obat = Obat::where('status_hapus',  0)->orderBy('id', 'desc')->get();
-        // dd( $obat );
+        $obat = Obat::where('status_hapus',  0)->with('kartuStokObat')->orderBy('id', 'desc')->get();
+        // dd($obat);
+        // $idobat = Obat::where('status_hapus',  0)->first();
+        // dd($idobat);
+        $kartustok = KartuStokObat::all();
         return view('master.obat.index', compact('obat','kartustok'));
     }
 
@@ -145,13 +148,25 @@ class ObatController extends Controller
                     DB::commit();
                     return redirect()->back()->with('message', 'Stok Obat berhasil ditambah.');
                 }
-            } else {
+            } else if ($jenis == 'data_kurang_stok')  {
+                $jumlah_obat=0;
                 $stok_saat_ini = $obat->total_pcs;
-                $stok_update = $stok_saat_ini - ($request->txtSatuanJmlKurang == 0 ? $request->txtJmlKurang : $request->txtJmlKurang * $obat->pcs);
-                $obat->total_pcs = $stok_update;
-                $obat->save();
-                DB::commit();
-                return redirect()->back()->with('message', 'Stok Obat berhasil dikurangi.');
+                $stok_update = $stok_saat_ini - ($request->txtSatuanJmlTambah == 0 ? $request->txtJmlTambah : $request->txtJmlTambah * $obat->psc);
+             
+                if ($stok_update > $stok_saat_ini) {
+                    $obat->total_pcs = $stok_update;
+                    $obat->save();
+                    $kartuStokObat = new KartuStokObat();
+                    $kartuStokObat->obat_id = $obat->id;
+                    $kartuStokObat->tanggal = now(); 
+                    $kartuStokObat->status = 'Kurang Stok';
+                    $kartuStokObat->jumlah = $request->txtJmlKurang;
+                    $kartuStokObat->satuan = $request->txtSatuanJmlKurang;
+                    $kartuStokObat->keterangan = $request->txtCttnKurang;
+                    $kartuStokObat->save();
+                    DB::commit();
+                    return redirect()->back()->with('message', 'Stok Obat berhasil dikurangi.');
+                }
             }
             
         } catch (\Throwable $e) {

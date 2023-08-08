@@ -15,6 +15,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use App\Models\master\PasienDewasa;
 use App\Models\SuratKeteranganSakit;
+use App\Models\DetailTransaksi;
 
 use App\Models\SuratRujukan;
 
@@ -221,7 +222,7 @@ class KlinikController extends Controller
                 }
             }
             
-
+            //add transaksi
             $total_harga = $total_harga_obat+(int)str_replace(',', '', $request->harga_layanannya);
             $new_transaksi = new Transaksi();
             $new_transaksi->jenis_layanan = "KLINIK";
@@ -231,7 +232,7 @@ class KlinikController extends Controller
             $new_transaksi->total_harga = $total_harga;
             $new_transaksi->users_id = $user->id;
             $new_transaksi->tanggal = date("Y-m-d H:i:s");
-            $new_transaksi->save();
+            $new_transaksi->save(); 
 
             DB::commit();
             return redirect('/layanan-klinik/'.$request->idSimpan)->with(['message'=>'Data transaksi berhasil disimpan.']);
@@ -313,6 +314,13 @@ class KlinikController extends Controller
             $new_transaksi->tanggal = date("Y-m-d H:i:s");
             $new_transaksi->users_id = Auth::user()->id;
             $new_transaksi->save();
+
+            //detail transaksi
+            $new_detail_transaksi = new DetailTransaksi();
+            $new_detail_transaksi-> transaksi_id = $new_transaksi->id;
+            $new_detail_transaksi->pasienable_id = $noreg;
+            $new_detail_transaksi->pasienable_type = 'App\Models\master\PasienDewasa';
+            $new_detail_transaksi->save();
 
             DB::commit();
             return redirect('/layanan-klinik/'.$noreg)->with(['message'=>'Data transaksi berhasil disimpan.']);
@@ -397,6 +405,13 @@ class KlinikController extends Controller
             $new_transaksi->tanggal = date("Y-m-d H:i:s");
             $new_transaksi->users_id = Auth::user()->id;
             $new_transaksi->save();
+
+            //detail transaksi
+            $new_detail_transaksi = new DetailTransaksi();
+            $new_detail_transaksi-> transaksi_id = $new_transaksi->id;
+            $new_detail_transaksi->pasienable_id = $id_new_pasien_bayi;
+            $new_detail_transaksi->pasienable_type = 'App\Models\master\PasienBayi';
+            $new_detail_transaksi->save();
 
             DB::commit();
             return redirect('/layanan-klinik/'.$id_new_pasien_bayi)->with(['message'=>'Data transaksi berhasil disimpan.']);

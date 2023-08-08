@@ -14,6 +14,7 @@ use App\Models\master\JenisLayanan;
 use App\Models\master\PasienDewasa;
 use Illuminate\Support\Facades\Auth;
 use App\Models\master\SuamiPasienDewasa;
+use App\Models\DetailTransaksi;
 
 class KbController extends Controller
 {
@@ -173,7 +174,7 @@ class KbController extends Controller
                     $image->move($destinationPath, $filenameToSave);
                     $new_lampiran = new lampiran();
                     $new_lampiran->jenis_layanan = '0';
-                    $new_lampiran->id_layanan = $id_jenis_layanan;
+                    // $new_lampiran->id_layanan = $id_jenis_layanan;
                     $new_lampiran->tanggal = $tgl_dilayani;
                     $new_lampiran->url_gambar = $imagePath;
                     $new_lampiran->no_registrasi_pasien = $no_regis;
@@ -191,6 +192,13 @@ class KbController extends Controller
             $new_transaksi->tanggal = $tgl_dilayani;
             $new_transaksi->users_id = Auth::user()->id;
             $new_transaksi->save();
+
+            //detail transaksi
+            $new_detail_transaksi = new DetailTransaksi();
+            $new_detail_transaksi-> transaksi_id = $new_transaksi->id;
+            $new_detail_transaksi->pasienable_id = $no_regis;
+            $new_detail_transaksi->pasienable_type = 'App\Models\master\PasienDewasa';
+            $new_detail_transaksi->save();
 
             // UPDATE STOK OBAT
             $id_obat = Obat::all();
@@ -443,6 +451,13 @@ class KbController extends Controller
             $new_transaksi->tanggal = $tgl;
             $new_transaksi->users_id = Auth::user()->id;
             $new_transaksi->save();
+
+            //detail transaksi
+            $new_detail_transaksi = new DetailTransaksi();
+            $new_detail_transaksi-> transaksi_id = $new_transaksi->id;
+            $new_detail_transaksi->pasienable_id = $id_pasien;
+            $new_detail_transaksi->pasienable_type = 'App\Models\master\PasienDewasa';
+            $new_detail_transaksi->save();
          
             if(($request->input("detectUseObat") == "1" || $request->input("detectChangeKB") == "1") && !empty($arrListIdObat) && $arrListIdObat[0] != ""){
                 $history_kb = HistoryKB::where('id_layanan_kb',$id_kartu)->first();
@@ -485,7 +500,7 @@ class KbController extends Controller
                     $image->move($destinationPath, $filenameToSave);;
                     $new_lampiran = new lampiran();
                     $new_lampiran->jenis_layanan = '0';
-                    $new_lampiran->id_layanan = $id_jenis_layanan;
+                    // $new_lampiran->id_layanan = $id_jenis_layanan;
                     $new_lampiran->tanggal = date('Y-m-d');
                     $new_lampiran->url_gambar = $imagePath;
                     $new_lampiran->no_registrasi_pasien = $no_regis;
