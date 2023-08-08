@@ -52,16 +52,17 @@ class LaporanController extends Controller
         $total_totharga = 0;
         foreach ($laporan as $transaksi) {
             // Mengakses data "DetailTransaksi" untuk transaksi saat ini
-            $detailTransaksi = $transaksi->detailTransaksi;
-    
+            // $detailTransaksi = $transaksi->detailTransaksi;
             // Sekarang Anda dapat mengakses detail dari setiap "DetailTransaksi"
-            foreach ($detailTransaksi as $detail) {
-                // Lakukan sesuatu dengan $detail (misalnya, menghitung total, menampilkan, dll.)
-                $total_keuntungan += $detail->harga_layanan;
-                $total_obat += $detail->harga_obat;
-                $total_totharga += $detail->total_harga;
-            }
+            $total_keuntungan += $transaksi->harga_layanan;
+            $total_obat += $transaksi->harga_obat;
+            $total_totharga += $transaksi->total_harga;
+            // foreach ($detailTransaksi as $detail) {
+            //     // Lakukan sesuatu dengan $detail (misalnya, menghitung total, menampilkan, dll.)
+            // }
         }
+        // dd($laporan);
+        // dd($total_totharga);
     
         return view('laporan.keuangan', compact(["laporan", "total_keuntungan", "total_obat", "total_totharga"]));
         // return $tanggal;
@@ -85,16 +86,9 @@ class LaporanController extends Controller
         $total_totharga = 0;
     
         foreach ($laporan as $transaksi) {
-            // Mengakses data "DetailTransaksi" untuk transaksi saat ini
-            $detailTransaksi = $transaksi->detailTransaksi;
-    
-            // Sekarang Anda dapat mengakses detail dari setiap "DetailTransaksi"
-            foreach ($detailTransaksi as $detail) {
-                // Lakukan sesuatu dengan $detail (misalnya, menghitung total, menampilkan, dll.)
-                $total_keuntungan += $detail->harga_layanan;
-                $total_obat += $detail->harga_obat;
-                $total_totharga += $detail->total_harga;
-            }
+            $total_keuntungan += $transaksi->harga_layanan;
+            $total_obat += $transaksi->harga_obat;
+            $total_totharga += $transaksi->total_harga;
         }
     
         $judul = 'Laporan Keuntungan BPM. Lita Anggraeni Amd. Keb' . "<BR>" . 'Periode ' . date("d-m-Y", strtotime($tanggal_bawah)) . ' - ' . date("d-m-Y", strtotime($tanggal_atas));

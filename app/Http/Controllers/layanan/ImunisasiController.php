@@ -162,7 +162,7 @@ class ImunisasiController extends Controller
         //
         $bayiArr = PasienBayi::where('id', '=', $id)->get();
         
-        $history = HistoryImunisasi::where('pasien_bayi_id',$bayiArr[0]->id)->get();
+        $history = HistoryImunisasi::where('id_pasien_bayi',$bayiArr[0]->id)->get();
   
         // $layanan_imunisasi = DB::table('layanan_imunisasi')->where('no_registrasi', '=', $bayi[0]->no_registrasi)->get();
         $layanan_hist = Imunisasi::where('id_pasien_bayi',$bayiArr[0]->id)->get();
@@ -256,7 +256,7 @@ class ImunisasiController extends Controller
             $new_history_imunisasi->id_layanan_imunisasi = $id_layanan;
             $new_history_imunisasi->tanggal = $imunisasi_jenis_layanan_update->tanggal;
             $new_history_imunisasi->status_hapus = 0;
-            $new_history_imunisasi->pasien_bayi_id = $request->noregKonf;
+            $new_history_imunisasi->id_pasien_bayi = $request->noregKonf;
             $new_history_imunisasi->bb = str_replace(",", ".", $request->bbnya);
             $new_history_imunisasi->keluhan = $request->keluhannya;
             $new_history_imunisasi->nasehat = $request->nasehatnya;
@@ -389,7 +389,7 @@ class ImunisasiController extends Controller
             return view('layanan.bayi_imunisasi.index', compact('bayiArr'));
         } catch (\Exception $e) {
             DB::rollback();
-            dd($e->getMessage());
+            // dd($e->getMessage());
             return redirect()->back()->with(['notif_gagal'=>'Data pasien gagal disimpan']);
         }
     }
