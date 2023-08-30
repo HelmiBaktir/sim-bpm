@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\layanan\Imunisasi;
 
 class Transaksi extends Model
 {
@@ -13,6 +14,10 @@ class Transaksi extends Model
     public function detailTransaksi()
     {
         return $this->hasMany(DetailTransaksi::class);
+    }
+    
+    public function imunisasi(){
+        return $this->belongsTo(Imunisasi::class,'id_layanan','id');
     }
 
 }

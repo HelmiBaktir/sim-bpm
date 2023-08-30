@@ -50,14 +50,17 @@
           <tr>
               <td style="text-align: center;"><?php echo ($key+1); ?></td>
               <?php foreach ($transaksi->detailTransaksi as $detailKey => $detail) { ?>
-                  <td style="text-align: left;"><?php echo ($detail->pasienable_id); ?></td>
-                  <td style="text-align: left;">
+                
                       <?php if ($detail->pasienable) {
-                          if ($detail->pasienable_type === 'App\Models\master\PasienDewasa') {
-                              echo($detail->pasienable->nama);
-                          } elseif ($detail->pasienable_type === 'App\Models\master\PasienBayi') {
-                              echo($detail->pasienable->nama);
-                          } else {
+                          if ($detail->pasienable_type === 'App\Models\master\PasienDewasa') {?>
+                          <td style="text-align: center;"><?php echo($detail->pasienable_id);?></td>
+                          <td style="text-align: center;"><?php echo($detail->pasienable->nama);?></td>
+                        <?php
+                        } elseif ($detail->pasienable_type === 'App\Models\master\PasienBayi') {?>
+                          <td style="text-align: center;"><?php echo($transaksi->imunisasi->no_kartu);?></td>
+                          <td style="text-align: center;"><?php echo($detail->pasienable->nama);?></td>
+                        <?php
+                        } else {
                               echo("Tidak terdaftar dalam pasien");
                           }
                       } ?>

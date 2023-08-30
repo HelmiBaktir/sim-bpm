@@ -95,17 +95,21 @@
                   </thead>
                   <tbody>
                     @foreach($laporan as $key => $transaksi)
+          
                       <tr>
-                        <td style="text-align: center;">{{($key+1)}}</td>
+                        <td style="text-align: center;">{{($key+1)}} </td>
                         @foreach ($transaksi->detailTransaksi as $detailKey => $detail)
                         <!-- Data pasienable_id dan pasienable_type -->
-                        <td style="text-align: left;">{{ $detail->pasienable_id }}</td>
-
+                        
                         <!-- Data lain dari pasienable -->
                         @if ($detail->pasienable)
-                            @if ($detail->pasienable_type === 'App\Models\master\PasienDewasa')
+                        @if ($detail->pasienable_type === 'App\Models\master\PasienDewasa')
+                            <td style="text-align: left;">{{ $detail->pasienable_id }}</td>
                             <td style="text-align: left;">{{ $detail->pasienable->nama }}</td><!-- Contoh, sesuaikan dengan atribut yang ada di model -->
                             @elseif ($detail->pasienable_type === 'App\Models\master\PasienBayi')
+                            
+                            <td style="text-align: left;">{{ $transaksi->imunisasi->no_kartu }}</td>
+
                             <td style="text-align: left;">{{ $detail->pasienable->nama }}</td> <!-- Contoh, sesuaikan dengan atribut yang ada di model -->
                             @endif
                         @endif

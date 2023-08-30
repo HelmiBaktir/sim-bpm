@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\DB;
 use App\Models\master\PasienDewasa;
 use App\Models\SuratKeteranganSakit;
 use App\Models\DetailTransaksi;
-
 use App\Models\SuratRujukan;
 
 use function GuzzleHttp\Promise\all;
